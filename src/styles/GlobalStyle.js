@@ -7,7 +7,11 @@ ${reset}
 * {
   box-sizing: border-box; 
   outline: none;
-  font-family: ‘Black Han Sans’, sans-serif;
+}
+
+body{
+  font-family: "'Noto Sans KR', sans-serif;";
+  color: #212121;
 }
 
 img{
