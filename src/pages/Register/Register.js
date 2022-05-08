@@ -1,18 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Register = () => {
   const [inputValues, setInputValues] = useState({
     email: '',
     password: '',
+    passwordCheck: '',
     brand_name: '',
   });
+  const [emailCheck, setEmailCheck] = useState(false);
+
+  const { email, password, passwordCheck, brand_name } = inputValues;
+
+  useEffect(() => {
+    setEmailCheck(false);
+  }, [email]);
 
   const changeValue = e => {
     const { name, value } = e.target;
     setInputValues(prestate => {
       return { ...prestate, [name]: value };
     });
+  };
+  const isEmail = email => {
+    const emailRegex =
+      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    return emailRegex.test(email);
+  };
+  const isPassword = password => {
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*+=-])(?=.*[0-9]).{8,25}$/;
+
+    return passwordRegex.test(password);
+  };
+  const handleEmailCheck = () => {
+    setEmailCheck(true);
+    alert('사용가능한 이메일입니다.');
+  };
+
+  const postCreate = () => {
+    if (!isEmail(email)) {
+      alert('이메일 형식을 지켜주세요.');
+    } else if (!emailCheck) {
+      alert('이메일 중복체크를 해주세요');
+    } else if (!isPassword(password)) {
+      alert('비밀번호는 영문, 숫자, 특수기호 조합으로 8~20 이상 입력해주세요');
+    } else if (password !== passwordCheck) {
+      alert('비밀번호가 일치하지 않습니다.');
+    } else if (!brand_name) {
+      alert('회사명을 입력해주세요');
+    } else {
+      alert('가입을 축하합니다');
+    }
   };
   return (
     <RegisterFormWrap>
@@ -21,36 +60,60 @@ const Register = () => {
       <RegisterForm>
         <InputWrap>
           <P>이메일</P>
-          <Input
-            type="email"
-            name="email"
-            value={inputValues.email}
-            onChange={changeValue}
-            placeholder="이메일형식은 @ .com을 포함해주세요"
-          />
+          <EmailWrap>
+            <Input
+              type="email"
+              name="email"
+              value={email}
+              onChange={changeValue}
+              placeholder="이메일"
+            />
+            <EmailCheckBtn type="button" onClick={handleEmailCheck}>
+              중복체크
+            </EmailCheckBtn>
+          </EmailWrap>
         </InputWrap>
         <InputWrap>
-          <P>패스워드</P>
+          <P>비밀번호</P>
           <Input
             type="password"
             name="password"
-            value={inputValues.password}
+            value={password}
             onChange={changeValue}
             placeholder="비밀번호"
           />
         </InputWrap>
         <InputWrap>
+          <P>비밀번호 확인</P>
+          <Input
+            type="password"
+            name="passwordCheck"
+            value={passwordCheck}
+            onChange={changeValue}
+            placeholder="비밀번호 확인"
+          />
+        </InputWrap>
+        {!password ? (
+          ''
+        ) : password === passwordCheck ? (
+          <PwTure>비밀번호가 일치합니다.</PwTure>
+        ) : (
+          <PwFalse>비밀번호가 일치하지 않습니다.</PwFalse>
+        )}
+        <InputWrap>
           <P>회사명(법인명)</P>
           <Input
             type="text"
             name="brand_name"
-            value={inputValues.brand_name}
+            value={brand_name}
             onChange={changeValue}
             placeholder="회사명(법인명)"
           />
         </InputWrap>
         <InputWrap>
-          <Button type="button">승인요청</Button>
+          <Button type="button" onClick={postCreate}>
+            승인요청
+          </Button>
         </InputWrap>
       </RegisterForm>
     </RegisterFormWrap>
@@ -62,6 +125,7 @@ const RegisterFormWrap = styled.div`
   width: 80%;
   height: 650px;
   margin: 0 auto;
+  padding-right: 45px;
 `;
 
 const Logo = styled.h2`
@@ -84,6 +148,19 @@ const InputWrap = styled.div`
   margin: 0 auto;
 `;
 
+const EmailWrap = styled.div`
+  position: relative;
+  ${props => props.theme.flex('', 'center')}
+`;
+
+const EmailCheckBtn = styled.button`
+  position: absolute;
+  width: 80px;
+  height: 30px;
+  top: 15px;
+  right: -90px;
+`;
+
 const P = styled.p`
   width: 150px;
   font-size: 20px;
@@ -91,16 +168,25 @@ const P = styled.p`
 `;
 
 const Input = styled.input`
-  width: 400px;
+  width: 390px;
   height: 40px;
   margin-top: 10px;
   border-radius: 3px;
   font-size: 20px;
 `;
 
+const PwTure = styled.span`
+  color: green;
+`;
+
+const PwFalse = styled.span`
+  color: red;
+`;
+
 const Button = styled.button`
-  width: 400px;
+  width: 390px;
   height: 40px;
+  margin-top: 20px;
   background-color: #0074e9;
   color: #ffffff;
   border-radius: 3px;
