@@ -24,7 +24,8 @@ const Register = () => {
   };
   const isEmail = email => {
     const emailRegex =
-      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+
     return emailRegex.test(email);
   };
   const isPassword = password => {
@@ -34,13 +35,32 @@ const Register = () => {
     return passwordRegex.test(password);
   };
   const handleEmailCheck = () => {
-    setEmailCheck(true);
-    alert('사용가능한 이메일입니다.');
+    fetch('http://172.2.0.189:8000/user/check-email', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+      }),
+    })
+      .then(res => {
+        if (res.status === 200) {
+          setEmailCheck(true);
+          alert('사용가능한 이메일입니다.');
+          return res.json();
+        } else {
+          alert('이미사용중인 이메일입니다.');
+        }
+      })
+      .then(data => console.log(data.message));
   };
 
   const postCreate = () => {
     if (!isEmail(email)) {
       alert('이메일 형식을 지켜주세요.');
+    } else if (email.length > 40) {
+      alert('이메일은 40자 이하로 입력해주세요.');
     } else if (!emailCheck) {
       alert('이메일 중복체크를 해주세요');
     } else if (!isPassword(password)) {
@@ -49,8 +69,26 @@ const Register = () => {
       alert('비밀번호가 일치하지 않습니다.');
     } else if (!brand_name) {
       alert('회사명을 입력해주세요');
+    } else if (brand_name.length > 20) {
+      alert('회사명은 20자 이하로 입력해주세요');
     } else {
-      alert('가입을 축하합니다');
+      fetch('http://172.2.0.189:8000/user/signup', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          brandname: brand_name,
+        }),
+      }).then(res => {
+        if (res.status === 201) {
+          alert('가입을 축하합니다');
+        } else {
+          alert('가입정보를 다시 확인해주세요');
+        }
+      });
     }
   };
   return (
@@ -73,6 +111,13 @@ const Register = () => {
             </EmailCheckBtn>
           </EmailWrap>
         </InputWrap>
+        {!email ? (
+          ''
+        ) : isEmail(email) && email.length < 41 ? (
+          ''
+        ) : (
+          <False>이메일형식을 지켜주세요.</False>
+        )}
         <InputWrap>
           <P>비밀번호</P>
           <Input
@@ -80,9 +125,17 @@ const Register = () => {
             name="password"
             value={password}
             onChange={changeValue}
-            placeholder="비밀번호"
+            placeholder="비밀번호는 영문, 숫자, 특수기호 조합, 8~20자"
           />
         </InputWrap>
+        {!password ? (
+          ''
+        ) : isPassword(password) ? (
+          <Ture>사용가능한 비밀번호입니다.</Ture>
+        ) : (
+          <False>사용불가능한 비밀번호입니다.</False>
+        )}
+
         <InputWrap>
           <P>비밀번호 확인</P>
           <Input
@@ -93,12 +146,12 @@ const Register = () => {
             placeholder="비밀번호 확인"
           />
         </InputWrap>
-        {!password ? (
+        {!(passwordCheck && password) ? (
           ''
         ) : password === passwordCheck ? (
-          <PwTure>비밀번호가 일치합니다.</PwTure>
+          <Ture>비밀번호가 일치합니다.</Ture>
         ) : (
-          <PwFalse>비밀번호가 일치하지 않습니다.</PwFalse>
+          <False>비밀번호가 일치하지 않습니다.</False>
         )}
         <InputWrap>
           <P>회사명(법인명)</P>
@@ -110,6 +163,13 @@ const Register = () => {
             placeholder="회사명(법인명)"
           />
         </InputWrap>
+        {!brand_name ? (
+          ''
+        ) : brand_name.length < 21 ? (
+          ''
+        ) : (
+          <False>회사명은 20자 이하로 입력해주세요.</False>
+        )}
         <InputWrap>
           <Button type="button" onClick={postCreate}>
             승인요청
@@ -175,11 +235,13 @@ const Input = styled.input`
   font-size: 20px;
 `;
 
-const PwTure = styled.span`
+const Ture = styled.span`
+  margin-top: 5px;
   color: green;
 `;
 
-const PwFalse = styled.span`
+const False = styled.span`
+  margin-top: 5px;
   color: red;
 `;
 
