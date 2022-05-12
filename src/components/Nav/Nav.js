@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 const Nav = () => {
   const navigate = useNavigate();
 
+  const token = localStorage.getItem('access_token');
+
   const goToMain = () => {
     navigate('/');
   };
@@ -17,12 +19,20 @@ const Nav = () => {
     navigate('login');
   };
 
+  const removeToken = () => {
+    localStorage.removeItem('access_token');
+  };
+
   return (
     <NavWrap>
       <Logo onClick={goToMain}>Influence</Logo>
       <ButtonWrap>
         <MyPage onClick={goToMyPage}>마이페이지</MyPage>
-        <Login onClick={goToLogin}>로그인</Login>
+        {token ? (
+          <Login onClick={removeToken}>로그아웃</Login>
+        ) : (
+          <Login onClick={goToLogin}>로그인</Login>
+        )}
       </ButtonWrap>
     </NavWrap>
   );

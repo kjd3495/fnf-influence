@@ -10,12 +10,31 @@ const Login = () => {
     password: '',
   });
 
+  const loginHandler = () => {
+    fetch('http://172.2.0.189:8000/user/signin', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: inputValues.email,
+        password: inputValues.password,
+      }),
+    })
+      .then(res => res.json)
+      .then(data => console.log(data.token));
+    // .then(res => {
+    //   localStorage.setItem('access_token', res.token);
+    //   navigate('/');
+    // });
+  };
+
   const changeValue = e => {
     const { name, value } = e.target;
     setInputValues(prestate => {
       return { ...prestate, [name]: value };
     });
   };
+
+  const validCheck =
+    inputValues.email.includes('@') && inputValues.password.length > 7;
 
   const goToMain = () => {
     navigate('/');
@@ -48,7 +67,9 @@ const Login = () => {
           />
         </InputWrap>
         <InputWrap>
-          <Button type="button">로그인</Button>
+          <Button type="button" onClick={loginHandler}>
+            로그인
+          </Button>
           <Button type="button" onClick={goToRegister}>
             회원가입
           </Button>
