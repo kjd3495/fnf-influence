@@ -2,36 +2,109 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Influencer from './Influencer';
+import MessageModal from './MessageModal';
 
 const Main = () => {
+  const [categories, setCategories] = useState([]);
+  const [influencerList, setInfluencerList] = useState([]);
   const [checkList, setCheckList] = useState([]);
-
   const [filterValues, setFilterValues] = useState({
-    category: categoryList[0],
+    categoryId: 1,
     keyword: '',
-    sort_by: 'follow',
+    sort_by: 'influencer_follower',
     sort_option: 'down',
   });
+  const [pagenation, setPagenation] = useState({
+    limit: 5,
+    offset: 0,
+  });
+  const [pageList, setPageList] = useState([]);
   const [keyword, setKeyword] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetch('http://172.2.0.189:8000/filter/category-list', {
+      headers: {
+        Authorization: localStorage.getItem('access_token'),
+      },
+    })
+      .then(res => res.json())
+      .then(data => {
+        setCategories(data.result);
+      });
+  }, []);
+
+  useEffect(() => {
     const queryUrl = `${
-      filterValues.category ? `?category_name=${filterValues.category}` : ``
-    }${filterValues.keyword ? `?search=${filterValues.keyword}` : ``}
+      filterValues.categoryId ? `?categoryId=${filterValues.categoryId}` : ``
+    }${
+      filterValues.keyword
+        ? `?key=${filterValues.keyword.replace(/ /g, '').replace(/#/g, '')}`
+        : ``
+    }
     ${
-      (filterValues.category && filterValues.sort_by) ||
+      (filterValues.categoryId && filterValues.sort_by) ||
       (filterValues.keyword && filterValues.sort_by)
         ? `&sort_by=${filterValues.sort_by}&sort_option=${filterValues.sort_option}`
         : ``
-    }`;
+    }${`&limit=${pagenation.limit}&offset=${pagenation.offset}`}`;
 
-    navigate(queryUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
-  }, [filterValues, navigate]);
+    const decodeUrl = decodeURIComponent(queryUrl);
+    navigate(decodeUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
+  }, [filterValues, pagenation, navigate]);
 
-  const filteringCategory = name => {
-    setFilterValues({ ...filterValues, category: name, keyword: '' });
+  useEffect(() => {
+    async function fetchData() {
+      if (location.search.includes('key')) {
+        const ListRes = await fetch(
+          `http://172.2.0.189:8000/search${location.search}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem('access_token'),
+            },
+          }
+        );
+        if (ListRes.status === 200) {
+          const List = await ListRes.json();
+          const length = Math.ceil(List.influencerList[1] / 5);
+          const newPageList = [];
+          for (let i = 0; i < length; i++) {
+            newPageList.push(i + 1);
+          }
+          setInfluencerList(List.influencerList[0]);
+          setPageList(newPageList);
+        }
+      } else {
+        const ListRes = await fetch(
+          `http://172.2.0.189:8000/filter/category-influencer-list${location.search}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem('access_token'),
+            },
+          }
+        );
+        if (ListRes.status === 200) {
+          const List = await ListRes.json();
+          const length = Math.ceil(List.result[1] / 5);
+          const newPageList = [];
+          for (let i = 0; i < length; i++) {
+            newPageList.push(i + 1);
+          }
+          setInfluencerList(List.result[0]);
+          setPageList(newPageList);
+        }
+      }
+    }
+    fetchData();
+  }, [location.search]);
+
+  const filteringCategory = id => {
+    setFilterValues({ ...filterValues, categoryId: id, keyword: '' });
+    setKeyword('');
+    setPagenation({ ...pagenation, offset: 0 });
   };
 
   const handleSorting = name => {
@@ -58,12 +131,16 @@ const Main = () => {
   };
 
   const handleSearch = () => {
-    setFilterValues({
-      ...filterValues,
-      keyword: keyword.replace(/ /g, '').replace(/#/g, ''),
-      category: '',
-    });
-    alert(filterValues.keyword);
+    if (keyword === '') {
+      alert('검색어를 입력해주세요');
+    } else {
+      setFilterValues({
+        ...filterValues,
+        keyword: keyword,
+        categoryId: 0,
+      });
+      setPagenation({ ...pagenation, offset: 0 });
+    }
   };
 
   const enterEvent = e => {
@@ -72,22 +149,28 @@ const Main = () => {
     }
   };
 
+  const handlePage = num => {
+    setPagenation({ ...pagenation, offset: (num - 1) * 5 });
+  };
   return (
     <MainWrap>
       <CategoryWrap>
         <P>카테고리</P>
         <CategoryList>
-          {categoryList.map((category_name, idx) => (
-            <Category
-              key={idx}
-              onClick={() => filteringCategory(category_name)}
-              color={
-                filterValues.category === category_name ? '#E6A225' : '#212121'
-              }
-            >
-              {category_name}
-            </Category>
-          ))}
+          {categories.length !== 0 &&
+            categories.map(category => (
+              <Category
+                key={category.id}
+                onClick={() => filteringCategory(category.id)}
+                color={
+                  filterValues.categoryId === category.id
+                    ? '#E6A225'
+                    : '#212121'
+                }
+              >
+                {category.category_name}
+              </Category>
+            ))}
         </CategoryList>
       </CategoryWrap>
       <Search>
@@ -139,19 +222,40 @@ const Main = () => {
           </tr>
         </thead>
         <tbody>
-          {influencerList.map(influencer => (
-            <Influencer
-              key={influencer.id}
-              influencer={influencer}
-              checkList={checkList}
-              handleCheck={handleCheck}
-            />
-          ))}
+          {influencerList.length !== 0 ? (
+            influencerList.map(influencer => (
+              <Influencer
+                key={influencer.id}
+                influencer={influencer}
+                checkList={checkList}
+                handleCheck={handleCheck}
+              />
+            ))
+          ) : (
+            <tr>
+              <Td colSpan={10}>
+                <span>검색결과가 없습니다</span>
+              </Td>
+            </tr>
+          )}
         </tbody>
       </Table>
       <SearchBtnWrap>
-        <SendBtn>메세지보내기</SendBtn>
+        <SendBtn onClick={() => setOpenModal(true)}>메세지보내기</SendBtn>
       </SearchBtnWrap>
+      <MessageModal openModal={openModal} setOpenModal={setOpenModal} />
+      <Pagenation>
+        {pageList.length !== 0 &&
+          pageList.map(num => (
+            <Num
+              key={num}
+              onClick={() => handlePage(num)}
+              color={pagenation.offset / 5 + 1 === num ? '#E6A225' : '#212121'}
+            >
+              {num}
+            </Num>
+          ))}
+      </Pagenation>
     </MainWrap>
   );
 };
@@ -184,6 +288,7 @@ const Category = styled.div`
   margin-left: 20px;
   margin-bottom: 15px;
   border: 1px solid ${props => props.color};
+  border-radius: 8px;
   color: ${props => props.color};
   font-size: 18px;
   font-weight: bold;
@@ -198,7 +303,7 @@ const Search = styled.div`
   width: 400px;
   height: 30px;
   margin: 0 auto;
-  margin-top: 20px;
+  margin-top: 30px;
   border: 1px solid black;
   border-radius: 10px;
 `;
@@ -280,98 +385,54 @@ const SendBtn = styled.button`
   margin-right: 10px;
 `;
 
-export default Main;
+const Pagenation = styled.div`
+  ${props => props.theme.flex('center', 'center')};
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 50px;
+`;
 
-const categoryList = [
-  '스포츠',
-  '음식',
-  '뷰티',
-  '여행',
-  '패션',
-  '반려동물',
-  '교육',
-  '음악',
-  '전자기기',
-  '영화',
-  '자동차',
-  '게임',
-];
+const Num = styled.div`
+  width: 100px;
+  color: ${props => props.color};
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
+
+const Td = styled.td`
+  height: 300px;
+  border-bottom: 2px solid black;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+`;
+
+export default Main;
 
 const Cols_Width = [
   '50px',
   '150px',
   '90px',
   '90px',
+  '90px',
   '70px',
-  '70px',
+  '90px',
   '100px',
-  '110px',
   '110px',
   '110px',
 ];
 const thList = ['프로필 사진', '인스타 ID', '카테고리', '태그', '성별'];
 
 const sortList = [
-  { title: '팔로워', name: 'follow' },
-  { title: '게시글 수', name: 'post' },
-  { title: '평균 좋아요', name: 'like' },
-  { title: '평균 댓글', name: 'comment' },
-];
-
-const influencerList = [
-  {
-    image: '/images/down.png',
-    id: 'qwe123_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe124_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe125_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe126_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe127_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-  },
+  { title: '팔로워', name: 'influencer_follower' },
+  { title: '게시글 수', name: 'influencer_posting' },
+  { title: '평균 좋아요', name: 'influencer_average_like' },
+  { title: '평균 댓글', name: 'influencer_average_comment' },
 ];
