@@ -13,17 +13,19 @@ const Login = () => {
   const loginHandler = () => {
     fetch('http://172.2.0.189:8000/user/signin', {
       method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
       body: JSON.stringify({
         email: inputValues.email,
         password: inputValues.password,
       }),
     })
-      .then(res => res.json)
-      .then(data => console.log(data.token));
-    // .then(res => {
-    //   localStorage.setItem('access_token', res.token);
-    //   navigate('/');
-    // });
+      .then(res => res.json())
+      .then(res => {
+        localStorage.setItem('access_token', res.token);
+        navigate('/');
+      });
   };
 
   const changeValue = e => {
