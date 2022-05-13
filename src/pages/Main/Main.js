@@ -95,10 +95,12 @@ const Main = () => {
           }
           setInfluencerList(List.result[0]);
           setPageList(newPageList);
+        } else if (ListRes.status === 501) {
+          alert('로그인 후 사용해주세요');
         }
       }
     }
-    fetchData();
+    if (location.search) fetchData();
   }, [location.search]);
 
   const filteringCategory = id => {
