@@ -22,8 +22,7 @@ const MyPage = () => {
         method: 'GET',
         headers: {
           'Content-type': 'application/json',
-          Authorization:
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzksImlhdCI6MTY1MjMzNDM2MywiZXhwIjoxNjUzNjMwMzYzfQ.9ma55YRXI0PWXJ2PRGFhRb6GF9lxo5ZOuJXfxeV-ki0',
+          Authorization: localStorage.getItem('access_token'),
         },
       }
     )
@@ -65,13 +64,21 @@ const MyPage = () => {
           <Folder key={id} id={id} campaign_name={campaign_name} />
         ))}
       </CampaignWrap>
+      {buttonLength === 0 && (
+        <PhraseWrap>
+          <PhraseHolder>캠페인을 생성해주세요</PhraseHolder>
+        </PhraseWrap>
+      )}
       <PaginationButtonWrap>
-        {buttonLength &&
+        {buttonLength !== 0 ? (
           buttonLengthArr.map(data => (
             <PaginationButton key={data} onClick={() => updateOffset(data - 1)}>
               {data}
             </PaginationButton>
-          ))}
+          ))
+        ) : (
+          <PaginationButton onClick={() => updateOffset(0)}>1</PaginationButton>
+        )}
       </PaginationButtonWrap>
     </MyPageWrap>
   );
@@ -124,4 +131,15 @@ const PaginationButton = styled.button`
   &:hover {
     color: #0074e9;
   }
+`;
+
+const PhraseWrap = styled.div`
+  ${({ theme }) => theme.flex('center', 'center')}
+`;
+
+const PhraseHolder = styled.div`
+  ${({ theme }) => theme.flex('center', 'center')}
+  height: 250px;
+  margin-bottom: 50px;
+  font-size: 30px;
 `;

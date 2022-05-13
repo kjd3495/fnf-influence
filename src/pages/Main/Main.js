@@ -312,7 +312,6 @@ const HashTag = styled.div`
   width: 55px;
   height: 25px;
   border-right: 1px solid gray;
-  line-height: 1.2;
   font-size: 25px;
   font-weight: bold;
   text-align: center;

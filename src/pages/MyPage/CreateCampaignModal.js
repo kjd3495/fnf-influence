@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 const CreateCampaignModal = ({ modalOpen, setModalOpen }) => {
+  const navigate = useNavigate;
   const [nameValue, setNameValue] = useState('');
 
   const postCampaignName = () => {
@@ -10,8 +12,7 @@ const CreateCampaignModal = ({ modalOpen, setModalOpen }) => {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
-        Authorization:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzksImlhdCI6MTY1MjMzNDM2MywiZXhwIjoxNjUzNjMwMzYzfQ.9ma55YRXI0PWXJ2PRGFhRb6GF9lxo5ZOuJXfxeV-ki0',
+        Authorization: localStorage.getItem('access_token'),
       },
       body: JSON.stringify({
         campaignName: nameValue,
