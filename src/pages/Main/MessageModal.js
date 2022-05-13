@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-const MessageModal = ({ openModal, setOpenModal }) => {
+const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
   const [campaignList, setCampaignList] = useState([]);
   const [inputValues, setInputValues] = useState({
-    campaign: '',
+    campaign: 0,
     content: '',
   });
-
+  console.log(inputValues.campaign);
   useEffect(() => {
     async function fetchData() {
       const campaignListRes = await fetch(
@@ -21,14 +21,43 @@ const MessageModal = ({ openModal, setOpenModal }) => {
       );
       if (campaignListRes.status === 200) {
         const campaignList = await campaignListRes.json();
-        console.log(campaignList);
+        setCampaignList(campaignList.result);
+        setInputValues({
+          ...inputValues,
+          campaign: campaignList.result[0].id,
+        });
       }
     }
     fetchData();
   }, []);
 
   const handleContent = e => {
-    setInputValues({ ...inputValues.content, content: e.target.value });
+    setInputValues({ ...inputValues, content: e.target.value });
+  };
+
+  const handleCampaign = e => {
+    setInputValues({ ...inputValues, campaign: e.target.value });
+  };
+  const handleMessage = () => {
+    fetch('http://172.2.0.189:8000/message/send', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('access_token'),
+      },
+      body: JSON.stringify({
+        content: inputValues.content,
+        campaignID: inputValues.campaign,
+        influencerIDs: checkList,
+      }),
+    }).then(res => {
+      if (res.status === 200) {
+        alert('전송이 완료되었습니다.');
+        setOpenModal(false);
+        setCheckList([]);
+        setInputValues({ ...inputValues, content: '' });
+      }
+    });
   };
   return (
     <Modal
@@ -41,10 +70,10 @@ const MessageModal = ({ openModal, setOpenModal }) => {
         <ul>
           <li>
             <P>캠페인명</P>
-            <select>
+            <select onChange={handleCampaign} value={inputValues.campaign}>
               {campaignList.map(campaign => (
-                <option key={campaign} value={campaign}>
-                  {campaign}
+                <option key={campaign.id} value={campaign.id}>
+                  {campaign.campaign_name}
                 </option>
               ))}
             </select>
@@ -55,7 +84,9 @@ const MessageModal = ({ openModal, setOpenModal }) => {
           </li>
 
           <li>
-            <button type="button">보내기</button>
+            <button type="button" onClick={handleMessage}>
+              보내기
+            </button>
             <button type="button" onClick={() => setOpenModal(false)}>
               닫기
             </button>
@@ -66,8 +97,8 @@ const MessageModal = ({ openModal, setOpenModal }) => {
   );
 };
 const TextArea = styled.textarea`
-  width: 800px;
-  height: 600px;
+  width: 600px;
+  height: 400px;
   font-size: 15px;
   resize: none;
 `;
@@ -86,5 +117,3 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
   },
 };
-
-const campaignList = ['캠페인1', '캠페인2', '캠페인3'];

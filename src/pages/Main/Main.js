@@ -102,18 +102,37 @@ const Main = () => {
   }, [location.search]);
 
   const filteringCategory = id => {
-    setFilterValues({ ...filterValues, categoryId: id, keyword: '' });
-    setKeyword('');
-    setPagenation({ ...pagenation, offset: 0 });
+    const token = localStorage.getItem('access_token');
+    if (token !== null) {
+      setFilterValues({ ...filterValues, categoryId: id, keyword: '' });
+      setKeyword('');
+      setPagenation({ ...pagenation, offset: 0 });
+      setCheckList([]);
+    } else {
+      alert('로그인 후 이용해주세요');
+    }
   };
 
   const handleSorting = name => {
-    if (filterValues.sort_by !== name) {
-      setFilterValues({ ...filterValues, sort_by: name, sort_option: 'down' });
-    } else if (filterValues.sort_option === 'down') {
-      setFilterValues({ ...filterValues, sort_by: name, sort_option: 'up' });
+    const token = localStorage.getItem('access_token');
+    if (token !== null) {
+      if (filterValues.sort_by !== name) {
+        setFilterValues({
+          ...filterValues,
+          sort_by: name,
+          sort_option: 'down',
+        });
+      } else if (filterValues.sort_option === 'down') {
+        setFilterValues({ ...filterValues, sort_by: name, sort_option: 'up' });
+      } else {
+        setFilterValues({
+          ...filterValues,
+          sort_by: name,
+          sort_option: 'down',
+        });
+      }
     } else {
-      setFilterValues({ ...filterValues, sort_by: name, sort_option: 'down' });
+      alert('로그인 후 이용해주세요');
     }
   };
 
@@ -131,15 +150,21 @@ const Main = () => {
   };
 
   const handleSearch = () => {
-    if (keyword === '') {
-      alert('검색어를 입력해주세요');
+    const token = localStorage.getItem('access_token');
+    if (token !== null) {
+      if (keyword === '') {
+        alert('검색어를 입력해주세요');
+      } else {
+        setFilterValues({
+          ...filterValues,
+          keyword: keyword,
+          categoryId: 0,
+        });
+        setPagenation({ ...pagenation, offset: 0 });
+        setCheckList([]);
+      }
     } else {
-      setFilterValues({
-        ...filterValues,
-        keyword: keyword,
-        categoryId: 0,
-      });
-      setPagenation({ ...pagenation, offset: 0 });
+      alert('로그인 후 이용해주세요');
     }
   };
 
@@ -149,8 +174,24 @@ const Main = () => {
     }
   };
 
+  const handleMessageBtn = () => {
+    const token = localStorage.getItem('access_token');
+    if (token === null) {
+      alert('로그인 후 이용해주세요');
+    } else if (checkList.length === 0) {
+      alert('인플루언서를 선택해주세요');
+    } else {
+      setOpenModal(true);
+    }
+  };
+
   const handlePage = num => {
-    setPagenation({ ...pagenation, offset: (num - 1) * 5 });
+    const token = localStorage.getItem('access_token');
+    if (token !== null) {
+      setPagenation({ ...pagenation, offset: (num - 1) * 5 });
+    } else {
+      alert('로그인 후 이용해주세요');
+    }
   };
   return (
     <MainWrap>
@@ -241,9 +282,14 @@ const Main = () => {
         </tbody>
       </Table>
       <SearchBtnWrap>
-        <SendBtn onClick={() => setOpenModal(true)}>메세지보내기</SendBtn>
+        <SendBtn onClick={handleMessageBtn}>메세지보내기</SendBtn>
       </SearchBtnWrap>
-      <MessageModal openModal={openModal} setOpenModal={setOpenModal} />
+      <MessageModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        checkList={checkList}
+        setCheckList={setCheckList}
+      />
       <Pagenation>
         {pageList.length !== 0 &&
           pageList.map(num => (
