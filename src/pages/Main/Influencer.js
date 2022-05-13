@@ -2,8 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Influencer = ({ influencer, checkList, handleCheck }) => {
-  const { image, id, categories, tags, gender, follow, post, like, comment } =
-    influencer;
+  const {
+    id,
+    influencer_instagram_id,
+    influencer_img,
+    influencer_gender,
+    influencer_follower,
+    influencer_posting,
+    influencer_average_like,
+    influencer_average_comment,
+    influencer_categories,
+    influencer_hashtags,
+  } = influencer;
 
   return (
     <Tr>
@@ -15,45 +25,53 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
         />
       </Td>
       <Td>
-        <Img image={image} />
+        <Img image={influencer_img} />
       </Td>
-      <Td>{id}</Td>
+      <Td>{influencer_instagram_id}</Td>
       <Td>
-        {categories.map((category, idx) => (
-          <Div key={idx}>{category}</Div>
-        ))}
+        <Div>
+          {influencer_categories.length !== 0 &&
+            influencer_categories.map(category => (
+              <div key={category.categoryID}>
+                {category.category.category_name}
+              </div>
+            ))}
+        </Div>
       </Td>
       <Td>
-        {tags.map((tag, idx) => (
-          <Div key={idx}>#{tag}</Div>
-        ))}
+        <Div>
+          {influencer_hashtags.length !== 0 &&
+            influencer_hashtags.map(tag => (
+              <div key={tag.hashtagID}>#{tag.hashtag.hashtag_name}</div>
+            ))}
+        </Div>
       </Td>
-      <Td>{gender}</Td>
+      <Td>{influencer_gender}</Td>
       <Td>
-        {follow >= 10000
-          ? parseInt(follow / 10000) + '만'
-          : Math.floor(follow)
+        {influencer_follower >= 10000
+          ? parseInt(influencer_follower / 10000) + '만'
+          : Math.floor(influencer_follower)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
       <Td>
-        {post >= 10000
-          ? parseInt(post / 10000) + '만'
-          : Math.floor(post)
+        {influencer_posting >= 10000
+          ? parseInt(influencer_posting / 10000) + '만'
+          : Math.floor(influencer_posting)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
       <Td>
-        {like >= 10000
-          ? parseInt(like / 10000) + '만'
-          : Math.floor(like)
+        {influencer_average_like >= 10000
+          ? parseInt(influencer_average_like / 10000) + '만'
+          : Math.floor(influencer_average_like)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
       <Td>
-        {comment >= 10000
-          ? parseInt(comment / 10000) + '만'
-          : Math.floor(comment)
+        {influencer_average_comment >= 10000
+          ? parseInt(influencer_average_comment / 10000) + '만'
+          : Math.floor(influencer_average_comment)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
@@ -86,7 +104,9 @@ const Img = styled.div`
 `;
 
 const Div = styled.div`
-  margin-top: 10px;
+  ${props => props.theme.flex('space-around', 'center')};
+  flex-direction: column;
+  height: 120px;
 `;
 
 export default Influencer;
