@@ -60,10 +60,12 @@ export default Nav;
 const NavWrap = styled.div`
   ${({ theme }) => theme.flex('space-between', 'center')}
   padding: 2vh 3vw;
+  background-color: #162041;
+  color: #e6a225;
 `;
 
 const Logo = styled.span`
-  font-size: 25px;
+  font-size: 30px;
   cursor: pointer;
 `;
 
@@ -72,15 +74,19 @@ const ButtonWrap = styled.div`
 `;
 
 const MyPage = styled.button`
-  width: 90px;
+  width: 100px;
   border: none;
-  background-color: white;
+  background-color: inherit;
+  color: #e6a225;
+  font-size: 15px;
   cursor: pointer;
 `;
 
 const Login = styled.button`
-  width: 70px;
+  width: 100px;
   border: none;
-  background-color: white;
+  background-color: inherit;
+  color: #e6a225;
+  font-size: 15px;
   cursor: pointer;
 `;

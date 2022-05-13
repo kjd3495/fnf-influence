@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Influencer from './Influencer';
+import MainTable from './MainTable';
 import MessageModal from './MessageModal';
 
 const Main = () => {
@@ -26,15 +26,19 @@ const Main = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://172.2.0.189:8000/filter/category-list', {
-      headers: {
-        Authorization: localStorage.getItem('access_token'),
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setCategories(data.result);
-      });
+    async function fetchData() {
+      const categoryRes = await fetch(
+        'http://172.2.0.189:8000/filter/category-list',
+        {
+          headers: {
+            Authorization: localStorage.getItem('access_token'),
+          },
+        }
+      );
+      const categoriesData = await categoryRes.json();
+      setCategories(categoriesData.result);
+    }
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -95,10 +99,12 @@ const Main = () => {
           }
           setInfluencerList(List.result[0]);
           setPageList(newPageList);
+        } else if (ListRes.status === 501) {
+          alert('로그인 후 사용해주세요');
         }
       }
     }
-    fetchData();
+    if (location.search) fetchData();
   }, [location.search]);
 
   const filteringCategory = id => {
@@ -110,37 +116,6 @@ const Main = () => {
       setCheckList([]);
     } else {
       alert('로그인 후 이용해주세요');
-    }
-  };
-
-  const handleSorting = name => {
-    const token = localStorage.getItem('access_token');
-    if (token !== null) {
-      if (filterValues.sort_by !== name) {
-        setFilterValues({
-          ...filterValues,
-          sort_by: name,
-          sort_option: 'down',
-        });
-      } else if (filterValues.sort_option === 'down') {
-        setFilterValues({ ...filterValues, sort_by: name, sort_option: 'up' });
-      } else {
-        setFilterValues({
-          ...filterValues,
-          sort_by: name,
-          sort_option: 'down',
-        });
-      }
-    } else {
-      alert('로그인 후 이용해주세요');
-    }
-  };
-
-  const handleCheck = (e, id) => {
-    if (e.target.checked) {
-      setCheckList([...checkList, id]);
-    } else {
-      setCheckList(checkList.filter(check_id => check_id !== id));
     }
   };
 
@@ -193,27 +168,30 @@ const Main = () => {
       alert('로그인 후 이용해주세요');
     }
   };
+
   return (
     <MainWrap>
-      <CategoryWrap>
-        <P>카테고리</P>
-        <CategoryList>
-          {categories.length !== 0 &&
-            categories.map(category => (
-              <Category
-                key={category.id}
-                onClick={() => filteringCategory(category.id)}
-                color={
-                  filterValues.categoryId === category.id
-                    ? '#E6A225'
-                    : '#212121'
-                }
-              >
-                {category.category_name}
-              </Category>
-            ))}
-        </CategoryList>
-      </CategoryWrap>
+      <Top>
+        <CategoryWrap>
+          <P>카테고리</P>
+          <CategoryList>
+            {categories.length !== 0 &&
+              categories.map(category => (
+                <Category
+                  key={category.id}
+                  onClick={() => filteringCategory(category.id)}
+                  color={
+                    filterValues.categoryId === category.id
+                      ? '#E6A225'
+                      : '#212121'
+                  }
+                >
+                  {category.category_name}
+                </Category>
+              ))}
+          </CategoryList>
+        </CategoryWrap>
+      </Top>
       <Search>
         <HashTag>#</HashTag>
         <Input
@@ -225,98 +203,64 @@ const Main = () => {
         />
         <SearchBtn type="button" onClick={handleSearch} />
       </Search>
-      <Table>
-        <colgroup>
-          {Cols_Width.map((col, idx) => (
-            <col key={idx} width={col} />
-          ))}
-        </colgroup>
-        <thead>
-          <tr>
-            <Th />
-            {thList.map((th, idx) => (
-              <Th key={idx}>
-                <Span>{th}</Span>
-              </Th>
-            ))}
-            {sortList.map((sortTh, idx) => (
-              <Th key={idx} style={{ cursor: 'pointer' }}>
-                <SortDiv
-                  color={
-                    filterValues.sort_by === sortTh.name ? '#E6A225' : '#212121'
-                  }
-                  onClick={() => handleSorting(sortTh.name)}
-                >
-                  <Span>{sortTh.title}</Span>
-                  <SortImg
-                    imgUrl={
-                      filterValues.sort_by === sortTh.name
-                        ? filterValues.sort_option === 'down'
-                          ? '/images/down.png'
-                          : '/images/up.png'
-                        : '/images/sort.png'
-                    }
-                  />
-                </SortDiv>
-              </Th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {influencerList.length !== 0 ? (
-            influencerList.map(influencer => (
-              <Influencer
-                key={influencer.id}
-                influencer={influencer}
-                checkList={checkList}
-                handleCheck={handleCheck}
-              />
-            ))
-          ) : (
-            <tr>
-              <Td colSpan={10}>
-                <span>검색결과가 없습니다</span>
-              </Td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-      <SearchBtnWrap>
+      <SendBtnWrap>
         <SendBtn onClick={handleMessageBtn}>메세지보내기</SendBtn>
-      </SearchBtnWrap>
+      </SendBtnWrap>
       <MessageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         checkList={checkList}
         setCheckList={setCheckList}
       />
-      <Pagenation>
-        {pageList.length !== 0 &&
-          pageList.map(num => (
-            <Num
-              key={num}
-              onClick={() => handlePage(num)}
-              color={pagenation.offset / 5 + 1 === num ? '#E6A225' : '#212121'}
-            >
-              {num}
-            </Num>
-          ))}
-      </Pagenation>
+      <TableWrap>
+        <MainTable
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
+          influencerList={influencerList}
+          checkList={checkList}
+          setCheckList={setCheckList}
+        />
+        <Pagenation>
+          {pageList.length !== 0 &&
+            pageList.map(num => (
+              <Num
+                key={num}
+                onClick={() => handlePage(num)}
+                color={
+                  pagenation.offset / 5 + 1 === num ? '#E6A225' : '#212121'
+                }
+              >
+                {num}
+              </Num>
+            ))}
+        </Pagenation>
+      </TableWrap>
     </MainWrap>
   );
 };
 
-const MainWrap = styled.div``;
-
-const CategoryWrap = styled.div`
-  width: 860px;
+const MainWrap = styled.div`
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f4f5f7;
+`;
+const Top = styled.div`
+  width: 1200px;
+  padding: 20px;
   margin: 0 auto;
-  margin-top: 40px;
+  border-radius: 8px;
+  background-color: #ffffff;
+`;
+const CategoryWrap = styled.div`
+  width: 840px;
+  margin: 0 auto;
 `;
 
 const P = styled.p`
-  margin-left: 20px;
+  width: 100%;
   margin-bottom: 30px;
+  margin-left: 20px;
+  padding-top: 20px;
   font-size: 20px;
   font-weight: bold;
 `;
@@ -324,7 +268,7 @@ const P = styled.p`
 const CategoryList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
+  width: 840px;
 `;
 
 const Category = styled.div`
@@ -349,9 +293,10 @@ const Search = styled.div`
   width: 400px;
   height: 30px;
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 40px;
   border: 1px solid black;
   border-radius: 10px;
+  background-color: #ffffff;
 `;
 
 const HashTag = styled.div`
@@ -360,6 +305,7 @@ const HashTag = styled.div`
   border-right: 1px solid gray;
   font-size: 25px;
   font-weight: bold;
+  line-height: 1.1;
   text-align: center;
 `;
 
@@ -385,57 +331,35 @@ const SearchBtn = styled.button`
   }
 `;
 
-const Table = styled.table`
+const TableWrap = styled.div`
   width: 1200px;
+  padding: 40px;
   margin: 0 auto;
-  margin-top: 40px;
+  margin-top: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
 `;
 
-const Th = styled.th`
-  height: 60px;
-  border-bottom: 2px solid black;
-  font-size: 15px;
-  font-weight: bold;
-  vertical-align: middle;
-`;
-
-const SortDiv = styled.div`
-  ${props => props.theme.flex('center', 'center')}
-  color: ${props => props.color}
-`;
-
-const Span = styled.span`
-  display: inline-block;
-`;
-
-const SortImg = styled.div`
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin-left: 5px;
-  background-image: url(${props => props.imgUrl});
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-color: inherit;
-`;
-
-const SearchBtnWrap = styled.div`
+const SendBtnWrap = styled.div`
   ${props => props.theme.flex('flex-end')}
   width: 1200px;
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 10px;
 `;
 const SendBtn = styled.button`
   padding: 10px;
   margin-right: 10px;
+  border-radius: 8px;
+  border: 1px solid #e6a225;
+  background-color: #e6a225;
+  color: #ffffff;
+  cursor: pointer;
 `;
 
 const Pagenation = styled.div`
   ${props => props.theme.flex('center', 'center')};
   margin: 0 auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-bottom: 50px;
+  margin-top: 50px;
 `;
 
 const Num = styled.div`
@@ -450,34 +374,4 @@ const Num = styled.div`
   }
 `;
 
-const Td = styled.td`
-  height: 300px;
-  border-bottom: 2px solid black;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
-`;
-
 export default Main;
-
-const Cols_Width = [
-  '50px',
-  '150px',
-  '90px',
-  '90px',
-  '90px',
-  '70px',
-  '90px',
-  '100px',
-  '110px',
-  '110px',
-];
-const thList = ['프로필 사진', '인스타 ID', '카테고리', '태그', '성별'];
-
-const sortList = [
-  { title: '팔로워', name: 'influencer_follower' },
-  { title: '게시글 수', name: 'influencer_posting' },
-  { title: '평균 좋아요', name: 'influencer_average_like' },
-  { title: '평균 댓글', name: 'influencer_average_comment' },
-];
