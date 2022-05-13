@@ -8,7 +8,7 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
     campaign: 0,
     content: '',
   });
-  console.log(inputValues.campaign);
+
   useEffect(() => {
     async function fetchData() {
       const campaignListRes = await fetch(
@@ -22,9 +22,11 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
       if (campaignListRes.status === 200) {
         const campaignList = await campaignListRes.json();
         setCampaignList(campaignList.result);
-        setInputValues({
-          ...inputValues,
-          campaign: campaignList.result[0].id,
+        setInputValues(preState => {
+          return {
+            ...preState,
+            campaign: campaignList.result[0].id,
+          };
         });
       }
     }
