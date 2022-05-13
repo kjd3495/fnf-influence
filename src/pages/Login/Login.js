@@ -23,8 +23,12 @@ const Login = () => {
     })
       .then(res => res.json())
       .then(res => {
-        localStorage.setItem('access_token', res.token);
-        navigate('/');
+        if (validCheck) {
+          localStorage.setItem('access_token', res.token);
+          navigate('/');
+        } else if (validCheck !== true) {
+          alert('입력한 정보가 맞지 않습니다');
+        }
       });
   };
 

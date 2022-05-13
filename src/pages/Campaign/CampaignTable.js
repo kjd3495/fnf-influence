@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const SummaryTable = ({ setCampaignCount }) => {
+const CampaignTable = () => {
   const [info, setInfo] = useState({});
 
   useEffect(() => {
@@ -15,9 +15,8 @@ const SummaryTable = ({ setCampaignCount }) => {
       .then(res => res.json())
       .then(data => {
         setInfo(data.result);
-        setCampaignCount(info.campaignCount);
       });
-  }, [info.campaignCount, setCampaignCount]);
+  }, []);
 
   return (
     <Table>
@@ -31,8 +30,6 @@ const SummaryTable = ({ setCampaignCount }) => {
       <tbody>
         {info.brand && (
           <tr>
-            <Data>{info.brand}</Data>
-            <Data>{info.campaignCount}</Data>
             <Data>{info.totalRequest}</Data>
             <Data>{info.totalAccept}</Data>
             <Data>{info.totalWait}</Data>
@@ -44,15 +41,13 @@ const SummaryTable = ({ setCampaignCount }) => {
   );
 };
 
-export default SummaryTable;
+export default CampaignTable;
 
 const HEADER_INFO = [
-  { id: 1, header: '브랜드' },
-  { id: 2, header: '캠페인' },
-  { id: 3, header: '전체 요청' },
-  { id: 4, header: '수락된 요청' },
-  { id: 5, header: '대기중인 요청' },
-  { id: 6, header: '거절된 요청' },
+  { id: 1, header: '전체' },
+  { id: 2, header: '수락된 요청' },
+  { id: 3, header: '대기중인 요청' },
+  { id: 4, header: '거절된 요청' },
 ];
 
 const Table = styled.table`

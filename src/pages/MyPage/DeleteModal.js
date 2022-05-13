@@ -7,8 +7,7 @@ const DeleteModal = ({ deleteOpen, setDeleteOpen, id }) => {
     fetch(`http://172.2.0.189:8000/campaign/delete-campaign/${id}`, {
       method: 'Delete',
       headers: {
-        Authorization:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNjUyMjQwNjI5LCJleHAiOjE2NTM1MzY2Mjl9.9lMZ2J9lStwQk2e4vZM6UsaSgL3ls4pVBm7uQFpBBGw',
+        Authorization: localStorage.getItem('access_token'),
       },
     })
       .then(res => res.json)

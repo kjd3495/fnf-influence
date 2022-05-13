@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [inputValues, setInputValues] = useState({
     email: '',
     password: '',
@@ -43,17 +45,15 @@ const Register = () => {
       body: JSON.stringify({
         email: email,
       }),
-    })
-      .then(res => {
-        if (res.status === 200) {
-          setEmailCheck(true);
-          alert('사용가능한 이메일입니다.');
-          return res.json();
-        } else {
-          alert('이미사용중인 이메일입니다.');
-        }
-      })
-      .then(data => console.log(data.message));
+    }).then(res => {
+      if (res.status === 200) {
+        setEmailCheck(true);
+        alert('사용가능한 이메일입니다.');
+        return res.json();
+      } else {
+        alert('이미사용중인 이메일입니다.');
+      }
+    });
   };
 
   const postCreate = () => {
@@ -85,12 +85,14 @@ const Register = () => {
       }).then(res => {
         if (res.status === 201) {
           alert('가입을 축하합니다');
+          navigate('/login');
         } else {
           alert('가입정보를 다시 확인해주세요');
         }
       });
     }
   };
+
   return (
     <RegisterFormWrap>
       <Logo>Influence</Logo>
@@ -125,7 +127,7 @@ const Register = () => {
             name="password"
             value={password}
             onChange={changeValue}
-            placeholder="비밀번호는 영문, 숫자, 특수기호 조합, 8~20자"
+            placeholder="영문, 숫자, 특수기호 조합, 8~20자"
           />
         </InputWrap>
         {!password ? (
@@ -205,7 +207,7 @@ const RegisterForm = styled.form`
 `;
 
 const InputWrap = styled.div`
-  margin: 0 auto;
+  margin: 5px auto;
 `;
 
 const EmailWrap = styled.div`
@@ -231,8 +233,13 @@ const Input = styled.input`
   width: 390px;
   height: 40px;
   margin-top: 10px;
+  border: 1px solid black;
   border-radius: 3px;
   font-size: 20px;
+
+  ::placeholder {
+    font-size: 15px;
+  }
 `;
 
 const Ture = styled.span`
@@ -249,11 +256,13 @@ const Button = styled.button`
   width: 390px;
   height: 40px;
   margin-top: 20px;
+  border: none;
   background-color: #0074e9;
   color: #ffffff;
   border-radius: 3px;
   font-size: 20px;
   font-weight: bold;
+  curosr: pointer;
 `;
 
 export default Register;

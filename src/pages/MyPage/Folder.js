@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import DeleteModal from './DeleteModal';
 import UpdateModal from './UpdateModal';
 
 const Folder = ({ campaign_name, id }) => {
+  const navigate = useNavigate();
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
 
@@ -15,10 +18,14 @@ const Folder = ({ campaign_name, id }) => {
     setUpdateOpen(true);
   };
 
+  const goToCampaign = () => {
+    navigate(`/campaign/${id}`);
+  };
+
   return (
     <FolderWrap>
-      <FolderHeader>인플루언서 수:</FolderHeader>
-      <FolderBody>{campaign_name}</FolderBody>
+      <FolderHeader />
+      <FolderBody onClick={goToCampaign}>{campaign_name}</FolderBody>
       <DeleteModal
         deleteOpen={deleteOpen}
         setDeleteOpen={setDeleteOpen}
