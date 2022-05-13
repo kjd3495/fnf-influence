@@ -28,7 +28,7 @@ const MyPage = () => {
     )
       .then(res => res.json())
       .then(data => setCampaignInfo(data.result));
-  }, [location.search]);
+  }, [location.search, campaignInfo]);
 
   const buttonLength = campaignCount && Math.ceil(campaignCount / 6);
 
