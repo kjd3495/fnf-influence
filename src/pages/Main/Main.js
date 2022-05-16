@@ -21,6 +21,7 @@ const Main = () => {
   const [pageList, setPageList] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [openModal, setOpenModal] = useState(false);
+  const [campaignList, setCampaignList] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -168,7 +169,6 @@ const Main = () => {
       alert('로그인 후 이용해주세요');
     }
   };
-
   return (
     <MainWrap>
       <Top>
@@ -211,6 +211,8 @@ const Main = () => {
         setOpenModal={setOpenModal}
         checkList={checkList}
         setCheckList={setCheckList}
+        campaignList={campaignList}
+        setCampaignList={setCampaignList}
       />
       <TableWrap>
         <MainTable
@@ -350,9 +352,9 @@ const SendBtn = styled.button`
   padding: 10px;
   margin-right: 10px;
   border-radius: 8px;
-  border: 1px solid #e6a225;
-  background-color: #e6a225;
-  color: #ffffff;
+  border: 1px solid ${props => props.theme.selectColor};
+  background-color: ${props => props.theme.selectColor};
+  color: ${props => props.theme.white};
   cursor: pointer;
 `;
 
