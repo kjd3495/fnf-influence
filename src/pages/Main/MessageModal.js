@@ -22,12 +22,13 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
       if (campaignListRes.status === 200) {
         const campaignList = await campaignListRes.json();
         setCampaignList(campaignList.result);
-        setInputValues(preState => {
-          return {
-            ...preState,
-            campaign: campaignList.result[0].id,
-          };
-        });
+        campaignList.result.length !== 0 &&
+          setInputValues(preState => {
+            return {
+              ...preState,
+              campaign: campaignList.result[0].id,
+            };
+          });
       }
     }
     fetchData();
