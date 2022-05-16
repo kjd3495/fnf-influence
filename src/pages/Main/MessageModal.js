@@ -14,7 +14,6 @@ const MessageModal = ({
     campaign: 0,
     content: '',
   });
-
   useEffect(() => {
     async function fetchData() {
       const campaignListRes = await fetch(
@@ -40,36 +39,39 @@ const MessageModal = ({
     }
     fetchData();
   }, [setCampaignList]);
-
   const handleContent = e => {
     setInputValues({ ...inputValues, content: e.target.value });
   };
-
   const handleCampaign = e => {
     setInputValues({ ...inputValues, campaign: e.target.value });
   };
-  const handleMessage = () => {
-    fetch('http://172.2.0.189:8000/message/send', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('access_token'),
-      },
-      body: JSON.stringify({
-        content: inputValues.content,
-        campaignID: inputValues.campaign,
-        influencerIDs: checkList,
-      }),
-    }).then(res => {
-      if (res.status === 200) {
-        alert('전송이 완료되었습니다.');
-        setOpenModal(false);
-        setCheckList([]);
-        setInputValues({ ...inputValues, content: '' });
-      }
-    });
+  const sendMessage = () => {
+    if (!inputValues.content) {
+      alert('메세지 내용을 입력해주세요.');
+    } else {
+      fetch('http://172.2.0.189:8000/message/send', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('access_token'),
+        },
+        body: JSON.stringify({
+          content: inputValues.content,
+          campaignID: inputValues.campaign,
+          influencerIDs: checkList,
+        }),
+      }).then(res => {
+        if (res.status === 200) {
+          alert('전송이 완료되었습니다.');
+          setOpenModal(false);
+          setCheckList([]);
+          setInputValues({ ...inputValues, content: '' });
+        } else if (res.status === 406) {
+          alert('이미 캠페인에 존재하는 인플루언서입니다');
+        }
+      });
+    }
   };
-
   return (
     <Modal
       isOpen={openModal}
@@ -96,10 +98,9 @@ const MessageModal = ({
             <P>메시지 내용</P>
             <TextArea value={inputValues.content} onChange={handleContent} />
           </li>
-
           <li>
             <ButtonWrap>
-              <Button type="button" onClick={handleMessage}>
+              <Button type="button" onClick={sendMessage}>
                 보내기
               </Button>
               <Button type="button" onClick={() => setOpenModal(false)}>
@@ -112,12 +113,10 @@ const MessageModal = ({
     </Modal>
   );
 };
-
 const SelectWrap = styled.div`
   ${props => props.theme.flex('flex-start', 'center')}
   margin-bottom: 20px;
 `;
-
 const Select = styled.select`
   width: 80px;
   margin-left: 20px;
@@ -132,11 +131,9 @@ const TextArea = styled.textarea`
 const P = styled.p`
   margin-bottom: 10px;
 `;
-
 const ButtonWrap = styled.div`
   ${props => props.theme.flex('flex-end', 'center')}
 `;
-
 const Button = styled.button`
   width: 60px;
   height: 40px;
@@ -148,7 +145,6 @@ const Button = styled.button`
   color: ${props => props.theme.white};
 `;
 export default MessageModal;
-
 const customStyles = {
   content: {
     top: '50%',
