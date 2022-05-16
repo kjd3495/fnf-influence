@@ -242,14 +242,14 @@ const Main = () => {
 const MainWrap = styled.div`
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #f4f5f7;
+  background-color: ${props => props.theme.lightGray};
 `;
 const Top = styled.div`
   width: 1200px;
   padding: 20px;
   margin: 0 auto;
   border-radius: 8px;
-  background-color: #ffffff;
+  background-color: ${props => props.theme.white};
 `;
 const CategoryWrap = styled.div`
   width: 840px;
@@ -296,7 +296,7 @@ const Search = styled.div`
   margin-top: 40px;
   border: 1px solid black;
   border-radius: 10px;
-  background-color: #ffffff;
+  background-color: ${props => props.theme.white};
 `;
 
 const HashTag = styled.div`
@@ -337,7 +337,7 @@ const TableWrap = styled.div`
   margin: 0 auto;
   margin-top: 20px;
   border-radius: 8px;
-  background-color: #ffffff;
+  background-color: ${props => props.theme.white};
 `;
 
 const SendBtnWrap = styled.div`
