@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
-  const [campaignList, setCampaignList] = useState([]);
+const MessageModal = ({
+  openModal,
+  setOpenModal,
+  checkList,
+  setCheckList,
+  campaignList,
+  setCampaignList,
+}) => {
   const [inputValues, setInputValues] = useState({
     campaign: 0,
     content: '',
@@ -20,19 +26,20 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
         }
       );
       if (campaignListRes.status === 200) {
-        const campaignList = await campaignListRes.json();
-        setCampaignList(campaignList.result);
-        campaignList.result.length !== 0 &&
+        const campaignListData = await campaignListRes.json();
+        if (campaignListData.result.length !== 0) {
+          setCampaignList(campaignListData.result);
           setInputValues(preState => {
             return {
               ...preState,
-              campaign: campaignList.result[0].id,
+              campaign: campaignListData.result[0].id,
             };
           });
+        }
       }
     }
     fetchData();
-  }, []);
+  }, [setCampaignList]);
 
   const handleContent = e => {
     setInputValues({ ...inputValues, content: e.target.value });
@@ -62,6 +69,7 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
       }
     });
   };
+
   return (
     <Modal
       isOpen={openModal}
@@ -75,11 +83,12 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
             <SelectWrap>
               <p>캠페인명</p>
               <Select onChange={handleCampaign} value={inputValues.campaign}>
-                {campaignList.map(campaign => (
-                  <option key={campaign.id} value={campaign.id}>
-                    {campaign.campaign_name}
-                  </option>
-                ))}
+                {campaignList.length !== 0 &&
+                  campaignList.map(campaign => (
+                    <option key={campaign.id} value={campaign.id}>
+                      {campaign.campaign_name}
+                    </option>
+                  ))}
               </Select>
             </SelectWrap>
           </li>
@@ -134,9 +143,9 @@ const Button = styled.button`
   padding: 10px;
   margin-left: 10px;
   border-radius: 8px;
-  border: 1px solid #e6a225;
-  background-color: #e6a225;
-  color: #ffffff;
+  border: 1px solid ${props => props.theme.selectColor};
+  background-color: ${props => props.theme.selectColor};
+  color: ${props => props.theme.white};
 `;
 export default MessageModal;
 
@@ -147,7 +156,7 @@ const customStyles = {
     right: 'auto',
     bottom: 'auto',
     marginRight: '-50%',
-    padding: '30px',
+    padding: '40px',
     border: '1px solid black',
     transform: 'translate(-50%, -50%)',
     fontSize: '20px',
