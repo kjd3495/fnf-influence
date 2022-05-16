@@ -14,10 +14,12 @@ const SummaryTable = ({ setCampaignCount }) => {
     })
       .then(res => res.json())
       .then(data => {
-        setInfo(data.result);
-        data.result.brand && setCampaignCount(info.campaignCount);
+        if (data.result.brand) {
+          setInfo(data.result);
+          setCampaignCount(data.result.campaignCount);
+        }
       });
-  }, [info.campaignCount, setCampaignCount]);
+  }, [setCampaignCount]);
 
   return (
     <Table>

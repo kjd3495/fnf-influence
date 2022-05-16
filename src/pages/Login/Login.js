@@ -23,11 +23,13 @@ const Login = () => {
     })
       .then(res => res.json())
       .then(res => {
-        if (validCheck) {
+        if (res.message === 'Invalid email') {
+          alert('존재하지 않는 이메일 입니다.');
+        } else if (res.message === 'Invalid password') {
+          alert('비밀번호가 일치하지 않습니다.');
+        } else if (res.message === 'Login success') {
           localStorage.setItem('access_token', res.token);
           navigate('/');
-        } else if (validCheck !== true) {
-          alert('입력한 정보가 맞지 않습니다');
         }
       });
   };
@@ -38,9 +40,6 @@ const Login = () => {
       return { ...prestate, [name]: value };
     });
   };
-
-  const validCheck =
-    inputValues.email.includes('@') && inputValues.password.length > 7;
 
   const goToMain = () => {
     navigate('/');
