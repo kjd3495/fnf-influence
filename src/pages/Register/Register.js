@@ -221,6 +221,11 @@ const EmailCheckBtn = styled.button`
   height: 30px;
   top: 15px;
   right: -90px;
+  border: none;
+  background-color: #0074e9;
+  color: #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
 `;
 
 const P = styled.p`
@@ -262,7 +267,7 @@ const Button = styled.button`
   border-radius: 3px;
   font-size: 20px;
   font-weight: bold;
-  curosr: pointer;
+  cursor: pointer;
 `;
 
 export default Register;

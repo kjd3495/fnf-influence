@@ -71,14 +71,16 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
       <form className="createUser">
         <ul>
           <li>
-            <P>캠페인명</P>
-            <select onChange={handleCampaign} value={inputValues.campaign}>
-              {campaignList.map(campaign => (
-                <option key={campaign.id} value={campaign.id}>
-                  {campaign.campaign_name}
-                </option>
-              ))}
-            </select>
+            <SelectWrap>
+              <p>캠페인명</p>
+              <Select onChange={handleCampaign} value={inputValues.campaign}>
+                {campaignList.map(campaign => (
+                  <option key={campaign.id} value={campaign.id}>
+                    {campaign.campaign_name}
+                  </option>
+                ))}
+              </Select>
+            </SelectWrap>
           </li>
           <li>
             <P>메시지 내용</P>
@@ -86,25 +88,55 @@ const MessageModal = ({ openModal, setOpenModal, checkList, setCheckList }) => {
           </li>
 
           <li>
-            <button type="button" onClick={handleMessage}>
-              보내기
-            </button>
-            <button type="button" onClick={() => setOpenModal(false)}>
-              닫기
-            </button>
+            <ButtonWrap>
+              <Button type="button" onClick={handleMessage}>
+                보내기
+              </Button>
+              <Button type="button" onClick={() => setOpenModal(false)}>
+                닫기
+              </Button>
+            </ButtonWrap>
           </li>
         </ul>
       </form>
     </Modal>
   );
 };
+
+const SelectWrap = styled.div`
+  ${props => props.theme.flex('flex-start', 'center')}
+  margin-bottom: 20px;
+`;
+
+const Select = styled.select`
+  width: 80px;
+  margin-left: 20px;
+`;
 const TextArea = styled.textarea`
   width: 600px;
   height: 400px;
+  margin-bottom: 10px;
   font-size: 15px;
   resize: none;
 `;
-const P = styled.p``;
+const P = styled.p`
+  margin-bottom: 10px;
+`;
+
+const ButtonWrap = styled.div`
+  ${props => props.theme.flex('flex-end', 'center')}
+`;
+
+const Button = styled.button`
+  width: 60px;
+  height: 40px;
+  padding: 10px;
+  margin-left: 10px;
+  border-radius: 8px;
+  border: 1px solid #e6a225;
+  background-color: #e6a225;
+  color: #ffffff;
+`;
 export default MessageModal;
 
 const customStyles = {
@@ -117,5 +149,7 @@ const customStyles = {
     padding: '30px',
     border: '1px solid black',
     transform: 'translate(-50%, -50%)',
+    fontSize: '20px',
+    fontWeight: 'bold',
   },
 };
