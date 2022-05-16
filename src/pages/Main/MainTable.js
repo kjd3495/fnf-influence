@@ -31,7 +31,6 @@ const MainTable = ({
       alert('로그인 후 이용해주세요');
     }
   };
-
   const handleCheck = (e, id) => {
     if (e.target.checked) {
       setCheckList([...checkList, id]);
@@ -39,7 +38,6 @@ const MainTable = ({
       setCheckList(checkList.filter(check_id => check_id !== id));
     }
   };
-
   return (
     <Table>
       <colgroup>
@@ -99,13 +97,11 @@ const MainTable = ({
     </Table>
   );
 };
-
 const Table = styled.table`
-  width: 1100px;
+  width: 1000px;
   margin: 0 auto;
   border-radius: 8px;
 `;
-
 const Th = styled.th`
   height: 60px;
   border-bottom: 2px solid black;
@@ -113,16 +109,13 @@ const Th = styled.th`
   font-weight: bold;
   vertical-align: middle;
 `;
-
 const SortDiv = styled.div`
   ${props => props.theme.flex('center', 'center')}
   color: ${props => props.color}
 `;
-
 const Span = styled.span`
   display: inline-block;
 `;
-
 const SortImg = styled.div`
   display: inline-block;
   width: 20px;
@@ -133,7 +126,6 @@ const SortImg = styled.div`
   background-repeat: no-repeat;
   background-color: inherit;
 `;
-
 const Td = styled.td`
   height: 300px;
   border-bottom: 2px solid black;
@@ -142,9 +134,7 @@ const Td = styled.td`
   text-align: center;
   vertical-align: middle;
 `;
-
 export default MainTable;
-
 const Cols_Width = [
   '50px',
   '150px',
@@ -158,7 +148,6 @@ const Cols_Width = [
   '110px',
 ];
 const thList = ['프로필 사진', '인스타 ID', '카테고리', '태그', '성별'];
-
 const sortList = [
   { title: '팔로워', name: 'influencer_follower' },
   { title: '게시글 수', name: 'influencer_posting' },

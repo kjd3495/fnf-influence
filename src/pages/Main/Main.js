@@ -154,6 +154,8 @@ const Main = () => {
     const token = localStorage.getItem('access_token');
     if (token === null) {
       alert('로그인 후 이용해주세요');
+    } else if (campaignList.length === 0) {
+      alert('마이페이지에서 캠페인을 먼저 생성해주세요');
     } else if (checkList.length === 0) {
       alert('인플루언서를 선택해주세요');
     } else {
@@ -247,7 +249,7 @@ const MainWrap = styled.div`
   background-color: ${props => props.theme.lightGray};
 `;
 const Top = styled.div`
-  width: 1200px;
+  width: 1100px;
   padding: 20px;
   margin: 0 auto;
   border-radius: 8px;
@@ -261,7 +263,7 @@ const CategoryWrap = styled.div`
 const P = styled.p`
   width: 100%;
   margin-bottom: 30px;
-  margin-left: 20px;
+  margin-left: 10px;
   padding-top: 20px;
   font-size: 20px;
   font-weight: bold;
@@ -277,7 +279,8 @@ const Category = styled.div`
   ${props => props.theme.flex('center', 'center')};
   width: 120px;
   height: 80px;
-  margin-left: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   margin-bottom: 15px;
   border: 1px solid ${props => props.color};
   border-radius: 8px;
@@ -334,7 +337,7 @@ const SearchBtn = styled.button`
 `;
 
 const TableWrap = styled.div`
-  width: 1200px;
+  width: 1100px;
   padding: 40px;
   margin: 0 auto;
   margin-top: 20px;
@@ -344,7 +347,7 @@ const TableWrap = styled.div`
 
 const SendBtnWrap = styled.div`
   ${props => props.theme.flex('flex-end')}
-  width: 1200px;
+  width: 1100px;
   margin: 0 auto;
   margin-top: 10px;
 `;
