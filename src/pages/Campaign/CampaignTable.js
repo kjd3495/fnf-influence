@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const CampaignTable = () => {
+const CampaignTable = ({ id }) => {
   const [info, setInfo] = useState({});
 
   useEffect(() => {
-    fetch('http://172.2.0.189:8000/count/total-influencer', {
+    fetch(`http://172.2.0.189:8000/count/campaign-influencer/${id}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json',
@@ -16,7 +16,7 @@ const CampaignTable = () => {
       .then(data => {
         setInfo(data.result);
       });
-  }, []);
+  }, [id]);
 
   return (
     <Table>
@@ -28,12 +28,12 @@ const CampaignTable = () => {
         </tr>
       </thead>
       <tbody>
-        {info.brand && (
+        {info && (
           <tr>
-            <Data>{info.totalRequest}</Data>
-            <Data>{info.totalAccept}</Data>
-            <Data>{info.totalWait}</Data>
-            <Data>{info.totalReject}</Data>
+            <Data>{info.totalCount}</Data>
+            <Data>{info.acceptCount}</Data>
+            <Data>{info.waitCount}</Data>
+            <Data>{info.rejectCount}</Data>
           </tr>
         )}
       </tbody>

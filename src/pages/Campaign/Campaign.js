@@ -17,6 +17,9 @@ const Campaign = () => {
 
   const [tableInfo, setTableInfo] = useState([]);
 
+  const [totalInfo, setTotalInfo] = useState([]);
+  const [isShowAll, setIsShowAll] = useState(true);
+
   const [pagenation, setPagenation] = useState({
     limit: 5,
     offset: 0,
@@ -48,6 +51,30 @@ const Campaign = () => {
       .then(data => setTableInfo(data.result));
   }, [filterValues, pagenation, navigate, params.id]);
 
+  useEffect(() => {
+    const queryUrl = `${
+      filterValues.sort_by && filterValues.sort_option
+        ? `?sort_by=${filterValues.sort_by}&sort_option=${filterValues.sort_option}`
+        : ``
+    }${`&limit=${pagenation.limit}&offset=${pagenation.offset}`}&campaignId=${
+      params.id
+    }`;
+    navigate(queryUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
+
+    fetch(
+      `http://172.2.0.189:8000/filter/campaign-total-status-influencer-list${queryUrl}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: localStorage.getItem('access_token'),
+        },
+      }
+    )
+      .then(res => res.json())
+      .then(data => setTotalInfo(data.result));
+  }, [filterValues, pagenation, navigate, params.id]);
+
   const handleSorting = name => {
     if (filterValues.sort_by !== name) {
       setFilterValues({ ...filterValues, sort_by: name, sort_option: 'down' });
@@ -68,12 +95,15 @@ const Campaign = () => {
 
   const sortHandler = value => {
     if (value === '모두보기') {
-      setFilterValues({ ...filterValues, sort_status_by: 'all' });
-    } else if (value === '수락') {
-      setFilterValues({ ...filterValues, sort_status_by: 1 });
+      setIsShowAll(true);
     } else if (value === '대기') {
+      setIsShowAll(false);
+      setFilterValues({ ...filterValues, sort_status_by: 1 });
+    } else if (value === '수락') {
+      setIsShowAll(false);
       setFilterValues({ ...filterValues, sort_status_by: 2 });
     } else if (value === '거절') {
+      setIsShowAll(false);
       setFilterValues({ ...filterValues, sort_status_by: 3 });
     }
   };
@@ -81,7 +111,7 @@ const Campaign = () => {
   return (
     <CampaignWrap>
       <TableWrap>
-        <CampaignTable />
+        <CampaignTable id={params.id} />
         <DropDown sortHandler={sortHandler} />
       </TableWrap>
       <Table>
@@ -123,15 +153,25 @@ const Campaign = () => {
           </tr>
         </thead>
         <tbody>
-          {tableInfo[0] &&
-            tableInfo.map(data => (
-              <InfluencerTable
-                key={data.id}
-                data={data}
-                checkList={checkList}
-                handleCheck={handleCheck}
-              />
-            ))}
+          {isShowAll
+            ? totalInfo[0] &&
+              totalInfo.map(data => (
+                <InfluencerTable
+                  key={data.id}
+                  data={data}
+                  checkList={checkList}
+                  handleCheck={handleCheck}
+                />
+              ))
+            : tableInfo[0] &&
+              tableInfo.map(data => (
+                <InfluencerTable
+                  key={data.id}
+                  data={data}
+                  checkList={checkList}
+                  handleCheck={handleCheck}
+                />
+              ))}
         </tbody>
       </Table>
       <DeleteBtnWrap>
@@ -162,7 +202,7 @@ const thList = ['프로필 사진', '인스타 ID', '카테고리', '태그', '�
 const sortList = [
   { title: '팔로워', name: 'influencer_follower' },
   { title: '게시글 수', name: 'influencer_posting' },
-  { title: '평균 좋아요', name: 'linfluencer_average_like' },
+  { title: '평균 좋아요', name: 'influencer_average_like' },
   { title: '평균 댓글', name: 'influencer_average_comment' },
 ];
 
@@ -177,6 +217,7 @@ const Table = styled.table`
   margin: 0 auto;
   margin-top: 40px;
 `;
+
 const Th = styled.th`
   height: 60px;
   border-bottom: 2px solid black;
@@ -184,13 +225,16 @@ const Th = styled.th`
   font-weight: bold;
   vertical-align: middle;
 `;
+
 const SortDiv = styled.div`
   ${props => props.theme.flex('center', 'center')}
   color: ${props => props.color}
 `;
+
 const Span = styled.span`
   display: inline-block;
 `;
+
 const SortImg = styled.div`
   display: inline-block;
   width: 20px;
@@ -222,66 +266,3 @@ const DeleteBtn = styled.button`
     border: 1px solid white;
   }
 `;
-
-const influencerList = [
-  {
-    image: '/images/down.png',
-    id: '123_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '3000',
-    post: '20',
-    like: '100',
-    comment: '130',
-    status: '수락',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe124_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '280000',
-    post: '190',
-    like: '3000',
-    comment: '200',
-    status: '수락',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe125_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '330000',
-    post: '760',
-    like: '72000',
-    comment: '13000',
-    status: '수락',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe126_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-    status: '대기',
-  },
-  {
-    image: '/images/down.png',
-    id: 'qwe127_as',
-    categories: ['스포츠', '음식'],
-    tags: ['축구', '농구', '요리', '맛집'],
-    gender: 'M',
-    follow: '300000',
-    post: '200',
-    like: '10000',
-    comment: '2000',
-    status: '거절',
-  },
-];
