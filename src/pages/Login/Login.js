@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { API } from '../../config';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Login = () => {
   });
 
   const loginHandler = () => {
-    fetch('http://172.2.0.189:8000/user/signin', {
+    fetch(`${API.signin}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',

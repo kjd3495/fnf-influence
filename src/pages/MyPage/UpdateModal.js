@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'react-modal';
+import { API } from '../../config';
 
 const UpdateModal = ({ updateOpen, setUpdateOpen, id, setCampaignInfo }) => {
   const location = useLocation();
   const [nameValue, setNameValue] = useState('');
 
   const updateCampaignName = () => {
-    fetch(`http://172.2.0.189:8000/campaign/update-message/${id}`, {
+    fetch(`${API.updateCampaign}/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-type': 'application/json',
@@ -22,9 +23,7 @@ const UpdateModal = ({ updateOpen, setUpdateOpen, id, setCampaignInfo }) => {
       .then(res => {
         if (res.message === 'Success') {
           fetch(
-            `http://172.2.0.189:8000/filter/user-campaign-list${
-              location.search || `?limit=6&offset=0`
-            }`,
+            `${API.userCampaignList}${location.search || `?limit=6&offset=0`}`,
             {
               method: 'GET',
               headers: {
