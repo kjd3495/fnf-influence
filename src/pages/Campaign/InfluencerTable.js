@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Influencer = ({ data, checkList, handleCheck }) => {
@@ -15,6 +16,12 @@ const Influencer = ({ data, checkList, handleCheck }) => {
     influencer_average_comment,
   } = data;
 
+  const navigate = useNavigate();
+
+  const goToDetail = () => {
+    navigate(`/detail/${id}`);
+  };
+
   return (
     <Tr>
       <Td>
@@ -24,56 +31,61 @@ const Influencer = ({ data, checkList, handleCheck }) => {
           onChange={e => handleCheck(e, id)}
         />
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         <Img image={influencer_img} />
       </Td>
-      <Td>{influencer_instagram_id}</Td>
-      <Td>
+      <Td onClick={goToDetail}>{influencer_instagram_id}</Td>
+      <Td onClick={goToDetail}>
         {influencer_categories.map((category, idx) => (
           <Div key={idx}>{category.category.category_name}</Div>
         ))}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_hashtags.map((data, idx) => (
           <Div key={idx}>#{data.hashtag.hashtag_name}</Div>
         ))}
       </Td>
-      <Td>{influencer_gender}</Td>
-      <Td>
+      <Td onClick={goToDetail}>{influencer_gender}</Td>
+      <Td onClick={goToDetail}>
         {influencer_follower >= 10000
           ? parseInt(influencer_follower / 10000) + '만'
           : Math.floor(influencer_follower)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_posting >= 10000
           ? parseInt(influencer_posting / 10000) + '만'
           : Math.floor(influencer_posting)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_average_like >= 10000
           ? parseInt(influencer_average_like / 10000) + '만'
           : Math.floor(influencer_average_like)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_average_comment >= 10000
           ? parseInt(influencer_average_comment / 10000) + '만'
           : Math.floor(influencer_average_comment)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>{data.messages[0].status.status_name}</Td>
+      <Td onClick={goToDetail}>{data.messages[0].status.status_name}</Td>
     </Tr>
   );
 };
 
 const Tr = styled.tr`
   height: 180px;
+
+  &:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
 `;
 const Td = styled.td`
   text-align: center;

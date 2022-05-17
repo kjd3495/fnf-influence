@@ -110,7 +110,7 @@ const Campaign = () => {
       params.id
     }`;
 
-    fetch('http://172.2.0.189:8000/campaign/delete-influencer', {
+    fetch(`${API.campaignDeleteInfluencer}`, {
       method: 'Delete',
       headers: {
         'Content-type': 'application/json',
@@ -121,40 +121,31 @@ const Campaign = () => {
       .then(res => res.json())
       .then(res => {
         if (res.message === 'Success') {
-          fetch(
-            `http://172.2.0.189:8000/filter/campaign-status-influencer-list${queryUrl}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-type': 'application/json',
-                Authorization: localStorage.getItem('access_token'),
-              },
-            }
-          )
+          fetch(`${API.campaignInfluencerList}${queryUrl}`, {
+            method: 'GET',
+            headers: {
+              'Content-type': 'application/json',
+              Authorization: localStorage.getItem('access_token'),
+            },
+          })
             .then(res => res.json())
             .then(data => setTableInfo(data.result));
-          fetch(
-            `http://172.2.0.189:8000/filter/campaign-total-status-influencer-list${queryUrl}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-type': 'application/json',
-                Authorization: localStorage.getItem('access_token'),
-              },
-            }
-          )
+          fetch(`${API.campaignTotalInfluencerList}${queryUrl}`, {
+            method: 'GET',
+            headers: {
+              'Content-type': 'application/json',
+              Authorization: localStorage.getItem('access_token'),
+            },
+          })
             .then(res => res.json())
             .then(data => setTotalInfo(data.result));
-          fetch(
-            `http://172.2.0.189:8000/count/campaign-influencer/${params.id}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-type': 'application/json',
-                Authorization: localStorage.getItem('access_token'),
-              },
-            }
-          )
+          fetch(`${API.campaignTable}/${params.id}`, {
+            method: 'GET',
+            headers: {
+              'Content-type': 'application/json',
+              Authorization: localStorage.getItem('access_token'),
+            },
+          })
             .then(res => res.json())
             .then(data => {
               setSummaryInfo(data.result);
@@ -174,6 +165,9 @@ const Campaign = () => {
 
   return (
     <CampaignWrap>
+      <Button onClick={() => navigate('/mypage')} type="button">
+        뒤로가기
+      </Button>
       <TableWrap>
         <CampaignTable
           id={params.id}
@@ -308,6 +302,18 @@ const sortList = [
   { title: '평균 좋아요', name: 'influencer_average_like' },
   { title: '평균 댓글', name: 'influencer_average_comment' },
 ];
+
+const Button = styled.button`
+  width: 100px;
+  height: 30px;
+  margin-bottom: 5vh;
+  margin-left: 4vw;
+  background-color: ${props => props.theme.selectColor};
+  border: 1px solid ${props => props.theme.selectColor};
+  border-radius: 8px;
+  color: ${props => props.theme.white};
+  cursor: pointer;
+`;
 
 const CampaignWrap = styled.div`
   background-color: ${({ theme }) => theme.lightGray};
