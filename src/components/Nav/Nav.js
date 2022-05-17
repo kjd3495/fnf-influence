@@ -59,7 +59,7 @@ export default Nav;
 
 const NavWrap = styled.div`
   ${({ theme }) => theme.flex('space-between', 'center')}
-  padding: 2vh 3vw;
+  padding: 4vh 3vw;
   background-color: #162041;
   color: #e6a225;
 `;
