@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
-const SummaryTable = ({ setCampaignCount }) => {
-  const [info, setInfo] = useState({});
-
+const SummaryTable = ({ tableInfo, setTableInfo, setCampaignCount }) => {
   useEffect(() => {
     fetch('http://172.2.0.189:8000/count/total-influencer', {
       method: 'GET',
@@ -15,11 +13,11 @@ const SummaryTable = ({ setCampaignCount }) => {
       .then(res => res.json())
       .then(data => {
         if (data.result.brand) {
-          setInfo(data.result);
+          setTableInfo(data.result);
           setCampaignCount(data.result.campaignCount);
         }
       });
-  }, [setCampaignCount]);
+  }, [setCampaignCount, setTableInfo]);
 
   return (
     <Table>
@@ -31,14 +29,14 @@ const SummaryTable = ({ setCampaignCount }) => {
         </tr>
       </thead>
       <tbody>
-        {info.brand && (
+        {tableInfo.brand && (
           <tr>
-            <Data>{info.brand}</Data>
-            <Data>{info.campaignCount}</Data>
-            <Data>{info.totalRequest}</Data>
-            <Data>{info.totalAccept}</Data>
-            <Data>{info.totalWait}</Data>
-            <Data>{info.totalReject}</Data>
+            <Data>{tableInfo.brand}</Data>
+            <Data>{tableInfo.campaignCount}</Data>
+            <Data>{tableInfo.totalRequest}</Data>
+            <Data>{tableInfo.totalAccept}</Data>
+            <Data>{tableInfo.totalWait}</Data>
+            <Data>{tableInfo.totalReject}</Data>
           </tr>
         )}
       </tbody>
@@ -68,6 +66,7 @@ const Header = styled.th`
   padding: 6px;
   border: 1px solid black;
   border-collapse: collapse;
+  background-color: #f0f5f7;
 `;
 
 const Data = styled.td`

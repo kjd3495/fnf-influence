@@ -4,7 +4,13 @@ import styled from 'styled-components';
 import DeleteModal from './DeleteModal';
 import UpdateModal from './UpdateModal';
 
-const Folder = ({ campaign_name, id }) => {
+const Folder = ({
+  campaign_name,
+  id,
+  setCampaignCount,
+  setCampaignInfo,
+  setTableInfo,
+}) => {
   const navigate = useNavigate();
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -30,6 +36,9 @@ const Folder = ({ campaign_name, id }) => {
         deleteOpen={deleteOpen}
         setDeleteOpen={setDeleteOpen}
         id={id}
+        setCampaignInfo={setCampaignInfo}
+        setCampaignCount={setCampaignCount}
+        setTableInfo={setTableInfo}
       />
       <FolderButtonWrap>
         <FolderButton onClick={openUpdate}>수정</FolderButton>
@@ -39,6 +48,7 @@ const Folder = ({ campaign_name, id }) => {
         updateOpen={updateOpen}
         setUpdateOpen={setUpdateOpen}
         id={id}
+        setCampaignInfo={setCampaignInfo}
       />
     </FolderWrap>
   );
@@ -56,6 +66,7 @@ const FolderHeader = styled.div`
   border: 1.5px solid black;
   border-bottom: none;
   padding: 5px;
+  background-color: #c4ebff;
   transform: translateX(-30px);
 `;
 
@@ -64,11 +75,12 @@ const FolderBody = styled.div`
   width: 250px;
   height: 130px;
   border: 1.5px solid black;
+  background-color: #c4ebff;
   cursor: pointer;
 
   &:hover {
     font-weight: bold;
-    color: #0074e9;
+    color: ${({ theme }) => theme.selectColor};
   }
 `;
 
@@ -80,13 +92,13 @@ const FolderButtonWrap = styled.div`
 
 const FolderButton = styled.button`
   margin: 10px;
-  border: 1px solid black;
+  border: 1px solid #dadee0;
   border-radius: 5px;
-  background-color: white;
+  background-color: ${({ theme }) => theme.lightGray};
   cursor: pointer;
 
   &:hover {
-    background-color: #0074e9;
+    background-color: ${({ theme }) => theme.selectColor};
     color: white;
   }
 `;

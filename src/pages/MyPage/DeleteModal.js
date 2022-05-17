@@ -1,8 +1,17 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'react-modal';
 
-const DeleteModal = ({ deleteOpen, setDeleteOpen, id }) => {
+const DeleteModal = ({
+  deleteOpen,
+  setDeleteOpen,
+  id,
+  setCampaignCount,
+  setCampaignInfo,
+  setTableInfo,
+}) => {
+  const location = useLocation();
   const deleteCampaign = () => {
     fetch(`http://172.2.0.189:8000/campaign/delete-campaign/${id}`, {
       method: 'Delete',
@@ -10,7 +19,41 @@ const DeleteModal = ({ deleteOpen, setDeleteOpen, id }) => {
         Authorization: localStorage.getItem('access_token'),
       },
     })
-      .then(res => res.json)
+      .then(res => res.json())
+      .then(res => {
+        if (res.message === 'Success') {
+          fetch(
+            `http://172.2.0.189:8000/filter/user-campaign-list${
+              location.search || `?limit=6&offset=0`
+            }`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-type': 'application/json',
+                Authorization: localStorage.getItem('access_token'),
+              },
+            }
+          )
+            .then(res => res.json())
+            .then(data => {
+              setCampaignInfo(data.result);
+            });
+          fetch('http://172.2.0.189:8000/count/total-influencer', {
+            method: 'GET',
+            headers: {
+              'Content-type': 'application/json',
+              Authorization: localStorage.getItem('access_token'),
+            },
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.result.brand) {
+                setTableInfo(data.result);
+                setCampaignCount(data.result.campaignCount);
+              }
+            });
+        }
+      })
       .then(setDeleteOpen(false));
   };
 
@@ -63,11 +106,12 @@ const ButtonWrap = styled.div`
 const Button = styled.button`
   width: 60px;
   margin: 0 10px;
-  border: 1px solid black;
+  border: 1px solid #dadee0;
+  border-radius: 8px;
   cursor: pointer;
 
   &:hover {
-    background-color: #0074e9;
+    background-color: ${({ theme }) => theme.selectColor};
     color: white;
   }
 `;

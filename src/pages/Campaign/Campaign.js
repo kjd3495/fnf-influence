@@ -14,18 +14,16 @@ const Campaign = () => {
     sort_option: 'down',
     sort_status_by: 1,
   });
-
   const [tableInfo, setTableInfo] = useState([]);
-
   const [totalInfo, setTotalInfo] = useState([]);
   const [isShowAll, setIsShowAll] = useState(true);
-
   const [pagenation, setPagenation] = useState({
     limit: 5,
     offset: 0,
   });
-
   const [checkList, setCheckList] = useState([]);
+  const [summaryInfo, setSummaryInfo] = useState({});
+  const [buttonIndex, setButtonIndex] = useState(1);
 
   useEffect(() => {
     const queryUrl = `${
@@ -108,74 +106,184 @@ const Campaign = () => {
     }
   };
 
+  const deleteInfluencer = () => {
+    const queryUrl = `${
+      filterValues.sort_by && filterValues.sort_option
+        ? `?sort_by=${filterValues.sort_by}&sort_option=${filterValues.sort_option}`
+        : ``
+    }${`&limit=${pagenation.limit}&offset=${pagenation.offset}`}&campaignId=${
+      params.id
+    }`;
+
+    fetch('http://172.2.0.189:8000/campaign/delete-influencer', {
+      method: 'Delete',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: localStorage.getItem('access_token'),
+      },
+      body: JSON.stringify({ campaignId: params.id, influencerId: checkList }),
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.message === 'Success') {
+          fetch(
+            `http://172.2.0.189:8000/filter/campaign-status-influencer-list${queryUrl}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-type': 'application/json',
+                Authorization: localStorage.getItem('access_token'),
+              },
+            }
+          )
+            .then(res => res.json())
+            .then(data => setTableInfo(data.result));
+          fetch(
+            `http://172.2.0.189:8000/filter/campaign-total-status-influencer-list${queryUrl}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-type': 'application/json',
+                Authorization: localStorage.getItem('access_token'),
+              },
+            }
+          )
+            .then(res => res.json())
+            .then(data => setTotalInfo(data.result));
+          fetch(
+            `http://172.2.0.189:8000/count/campaign-influencer/${params.id}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-type': 'application/json',
+                Authorization: localStorage.getItem('access_token'),
+              },
+            }
+          )
+            .then(res => res.json())
+            .then(data => {
+              setSummaryInfo(data.result);
+            });
+        }
+      });
+  };
+
+  const buttonLength =
+    summaryInfo.totalCount && Math.ceil(summaryInfo.totalCount / 5);
+
+  const buttonLengthArr = Array(buttonLength)
+    .fill()
+    .map((arr, i) => {
+      return i + 1;
+    });
+
   return (
     <CampaignWrap>
       <TableWrap>
-        <CampaignTable id={params.id} />
+        <CampaignTable
+          id={params.id}
+          summaryInfo={summaryInfo}
+          setSummaryInfo={setSummaryInfo}
+        />
         <DropDown sortHandler={sortHandler} />
       </TableWrap>
-      <Table>
-        <colgroup>
-          {Cols_Width.map((col, idx) => (
-            <col key={idx} width={col} />
-          ))}
-        </colgroup>
-        <thead>
-          <tr>
-            <Th />
-            {thList.map((th, idx) => (
-              <Th key={idx}>
-                <Span>{th}</Span>
-              </Th>
+      <BodyTableWrap>
+        <Table>
+          <colgroup>
+            {Cols_Width.map((col, idx) => (
+              <col key={idx} width={col} />
             ))}
-            {sortList.map((sortTh, idx) => (
-              <Th key={idx} style={{ cursor: 'pointer' }}>
-                <SortDiv
-                  color={
-                    filterValues.sort_by === sortTh.name ? '#E6A225' : '#212121'
-                  }
-                  onClick={() => handleSorting(sortTh.name)}
-                >
-                  <Span>{sortTh.title}</Span>
-                  <SortImg
-                    imgUrl={
-                      filterValues.sort_by === sortTh.name
-                        ? filterValues.sort_option === 'down'
-                          ? '/images/down.png'
-                          : '/images/up.png'
-                        : '/images/sort.png'
-                    }
-                  />
-                </SortDiv>
-              </Th>
-            ))}
-            <Th>상태</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {isShowAll
-            ? totalInfo[0] &&
-              totalInfo.map(data => (
-                <InfluencerTable
-                  key={data.id}
-                  data={data}
-                  checkList={checkList}
-                  handleCheck={handleCheck}
-                />
-              ))
-            : tableInfo[0] &&
-              tableInfo.map(data => (
-                <InfluencerTable
-                  key={data.id}
-                  data={data}
-                  checkList={checkList}
-                  handleCheck={handleCheck}
-                />
+          </colgroup>
+          <thead>
+            <tr>
+              <Th />
+              {thList.map((th, idx) => (
+                <Th key={idx}>
+                  <Span>{th}</Span>
+                </Th>
               ))}
-        </tbody>
-      </Table>
+              {sortList.map((sortTh, idx) => (
+                <Th key={idx} style={{ cursor: 'pointer' }}>
+                  <SortDiv
+                    color={
+                      filterValues.sort_by === sortTh.name
+                        ? '#E6A225'
+                        : '#212121'
+                    }
+                    onClick={() => handleSorting(sortTh.name)}
+                  >
+                    <Span>{sortTh.title}</Span>
+                    <SortImg
+                      imgUrl={
+                        filterValues.sort_by === sortTh.name
+                          ? filterValues.sort_option === 'down'
+                            ? '/images/down.png'
+                            : '/images/up.png'
+                          : '/images/sort.png'
+                      }
+                    />
+                  </SortDiv>
+                </Th>
+              ))}
+              <Th>상태</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {isShowAll
+              ? totalInfo[0] &&
+                totalInfo.map(data => (
+                  <InfluencerTable
+                    key={data.id}
+                    data={data}
+                    checkList={checkList}
+                    handleCheck={handleCheck}
+                  />
+                ))
+              : tableInfo[0] &&
+                tableInfo.map(data => (
+                  <InfluencerTable
+                    key={data.id}
+                    data={data}
+                    checkList={checkList}
+                    handleCheck={handleCheck}
+                  />
+                ))}
+          </tbody>
+        </Table>
+      </BodyTableWrap>
       <DeleteBtnWrap>
-        <DeleteBtn>선택 삭제</DeleteBtn>
+        <DeleteBtn onClick={deleteInfluencer}>선택 삭제</DeleteBtn>
+        <PaginationButtonWrap>
+          {buttonLength !== 0 ? (
+            buttonLengthArr.map(data => (
+              <PaginationButton
+                key={data}
+                onClick={() => {
+                  setPagenation(prestate => ({
+                    ...prestate,
+                    offset: (data - 1) * 5,
+                  }));
+                  setButtonIndex(data);
+                }}
+                color={buttonIndex === data ? '#E6A225' : 'black'}
+              >
+                {data}
+              </PaginationButton>
+            ))
+          ) : (
+            <PaginationButton
+              onClick={() => {
+                setPagenation(prestate => ({
+                  ...prestate,
+                  offset: 0,
+                }));
+              }}
+              color="#E6A225"
+            >
+              1
+            </PaginationButton>
+          )}
+        </PaginationButtonWrap>
       </DeleteBtnWrap>
     </CampaignWrap>
   );
@@ -206,10 +314,23 @@ const sortList = [
   { title: '평균 댓글', name: 'influencer_average_comment' },
 ];
 
-const CampaignWrap = styled.div``;
+const CampaignWrap = styled.div`
+  background-color: ${({ theme }) => theme.lightGray};
+  min-height: 91vh;
+  padding: 30px;
+`;
 
 const TableWrap = styled.div`
   ${({ theme }) => theme.flex('center', 'center')};
+  padding-bottom: 30px;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.white};
+`;
+
+const BodyTableWrap = styled.div`
+  padding-bottom: 30px;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.white};
 `;
 
 const Table = styled.table`
@@ -247,22 +368,37 @@ const SortImg = styled.div`
 `;
 
 const DeleteBtnWrap = styled.div`
-  ${props => props.theme.flex('flex-start')}
+  display: flex;
+  position: relative;
   width: 1200px;
   margin: 30px 0;
 `;
 
 const DeleteBtn = styled.button`
   padding: 10px;
-  border: 1px solid black;
+  border: none;
   border-radius: 5px;
   margin-left: 80px;
-  background-color: white;
+  background-color: ${({ theme }) => theme.selectColor};
+  color: white;
+  cursor: pointer;
+`;
+
+const PaginationButtonWrap = styled.div`
+  ${({ theme }) => theme.flex('center', 'center')}
+  position: absolute;
+  left: 50%;
+`;
+
+const PaginationButton = styled.button`
+  ${({ theme }) => theme.flex('center', 'center')};
+  background-color: ${({ theme }) => theme.lightGray};
+  border: none;
+  font-size: 17px;
+  color: ${props => props.color};
   cursor: pointer;
 
   &:hover {
-    background-color: #e6a225;
-    color: white;
-    border: 1px solid white;
+    color: ${({ theme }) => theme.selectColor};
   }
 `;
