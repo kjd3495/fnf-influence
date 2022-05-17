@@ -1,4 +1,5 @@
-export const BASE_URL = 'http://15.164.163.52:8000';
+// export const BASE_URL = 'http://15.164.163.52:8000';
+export const BASE_URL = 'http://172.2.0.189:8000';
 
 export const API = {
   signin: `${BASE_URL}/user/signin`, // 로그인

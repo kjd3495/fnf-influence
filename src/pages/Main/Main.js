@@ -77,7 +77,7 @@ const Main = () => {
           for (let i = 0; i < length; i++) {
             newPageList.push(i + 1);
           }
-          setInfluencerList(List.influencerList[0]);
+          setInfluencerList(List.influencerList);
           setPageList(newPageList);
         }
       } else if (!location.search) {
@@ -89,7 +89,7 @@ const Main = () => {
           for (let i = 0; i < length; i++) {
             newPageList.push(i + 1);
           }
-          setInfluencerList(List.result[0]);
+          setInfluencerList(List.result);
           setPageList(newPageList);
           setFilterValues({
             categoryId: 1,
@@ -112,7 +112,7 @@ const Main = () => {
           for (let i = 0; i < length; i++) {
             newPageList.push(i + 1);
           }
-          setInfluencerList(List.result[0]);
+          setInfluencerList(List.result);
           setPageList(newPageList);
         } else if (ListRes.status === 501) {
           alert('로그인 후 사용해주세요');

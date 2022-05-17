@@ -15,50 +15,59 @@ const CreateCampaignModal = ({
   const [nameValue, setNameValue] = useState('');
 
   const postCampaignName = () => {
-    fetch(`${API.createCampaign}`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: localStorage.getItem('access_token'),
-      },
-      body: JSON.stringify({
-        campaignName: nameValue,
-      }),
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (res.message === 'Success') {
-          fetch(
-            `${API.userCampaignList}${location.search || `?limit=6&offset=0`}`,
-            {
+    if (nameValue.length === 0) {
+      alert('캠페인명을 입력해주세요');
+    } else {
+      fetch(`${API.createCampaign}`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: localStorage.getItem('access_token'),
+        },
+        body: JSON.stringify({
+          campaignName: nameValue,
+        }),
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.message === 'Success') {
+            fetch(
+              `${API.userCampaignList}${
+                location.search || `?limit=6&offset=0`
+              }`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-type': 'application/json',
+                  Authorization: localStorage.getItem('access_token'),
+                },
+              }
+            )
+              .then(res => res.json())
+              .then(data => {
+                setCampaignInfo(data.result);
+              });
+            fetch(`${API.totalInfluencer}`, {
               method: 'GET',
               headers: {
                 'Content-type': 'application/json',
                 Authorization: localStorage.getItem('access_token'),
               },
-            }
-          )
-            .then(res => res.json())
-            .then(data => {
-              setCampaignInfo(data.result);
-            });
-          fetch(`${API.totalInfluencer}`, {
-            method: 'GET',
-            headers: {
-              'Content-type': 'application/json',
-              Authorization: localStorage.getItem('access_token'),
-            },
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (data.result.brand) {
-                setTableInfo(data.result);
-                setCampaignCount(data.result.campaignCount);
-              }
-            });
-        }
-      })
-      .then(setModalOpen(false));
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.result.brand) {
+                  setTableInfo(data.result);
+                  setCampaignCount(data.result.campaignCount);
+                }
+              });
+          }
+        })
+        .then(() => {
+          setModalOpen(false);
+          setNameValue('');
+        });
+    }
   };
 
   const nameHandler = e => {
