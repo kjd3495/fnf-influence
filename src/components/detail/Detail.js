@@ -34,7 +34,7 @@ const Detail = () => {
 
   return (
     <DetailWrap>
-      <Button onClick={() => navigate('/')} type="button">
+      <Button onClick={() => navigate(-1)} type="button">
         뒤로가기
       </Button>
       <Top>
@@ -224,18 +224,3 @@ const Image = styled.div`
 `;
 
 export default Detail;
-
-const InfluencerInfo = {
-  influencer_instagram_id: 'dqwe_1231',
-  influencer_img: '/images/sort.png',
-  influencer_follower: 10000,
-  influencer_posting: 100,
-  influencer_average_like: 1000,
-  influencer_average_comment: 500,
-  images: [
-    '/images/down.png',
-    '/images/sort.png',
-    '/images/up.png',
-    '/images/search.png',
-  ],
-};

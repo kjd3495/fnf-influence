@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://172.2.0.217:8000';
+export const BASE_URL = 'http://15.164.163.52:8000';
 
 export const API = {
   signin: `${BASE_URL}/user/signin`, // 로그인
@@ -18,4 +18,5 @@ export const API = {
   campaignInfluencerList: `${BASE_URL}/filter/campaign-status-influencer-list`, // 캠페인페이지 인플루언서 리스트
   campaignTotalInfluencerList: `${BASE_URL}/filter/campaign-total-status-influencer-list`, // 캠페인페이지 인플루언서 모두보기 리스트
   campaignTable: `${BASE_URL}/count/campaign-influencer`, // 캠페인페이지 테이블
+  campaignDeleteInfluencer: `${BASE_URL}/campaign/delete-influencer`, // 캠페인페이지 인플루언서 삭제
 };
