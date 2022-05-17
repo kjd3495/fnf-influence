@@ -9,6 +9,8 @@ const MyPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [campaignInfo, setCampaignInfo] = useState([]);
   const [campaignCount, setCampaignCount] = useState();
+  const [tableInfo, setTableInfo] = useState({});
+  const [buttonIndex, setButtonIndex] = useState(1);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,7 +30,7 @@ const MyPage = () => {
     )
       .then(res => res.json())
       .then(data => setCampaignInfo(data.result));
-  }, [location.search, campaignInfo]);
+  }, [location.search]);
 
   const buttonLength = campaignCount && Math.ceil(campaignCount / 6);
 
@@ -44,6 +46,7 @@ const MyPage = () => {
     const queryString = `?limit=${limit}&offset=${offset}`;
 
     navigate(queryString);
+    setButtonIndex(value + 1);
   };
 
   const openModal = () => {
@@ -53,18 +56,37 @@ const MyPage = () => {
   return (
     <MyPageWrap>
       <TableWrap>
-        <SummaryTable setCampaignCount={setCampaignCount} />
+        <SummaryTable
+          tableInfo={tableInfo}
+          setTableInfo={setTableInfo}
+          setCampaignCount={setCampaignCount}
+        />
       </TableWrap>
       <ButtonWrap>
         <CreateCampaign onClick={openModal}>캠페인 생성하기</CreateCampaign>
       </ButtonWrap>
-      <CreateCampaignModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      <CampaignWrap>
-        {campaignInfo.map(({ id, campaign_name }) => (
-          <Folder key={id} id={id} campaign_name={campaign_name} />
-        ))}
-      </CampaignWrap>
-      {buttonLength === 0 && (
+      <CreateCampaignModal
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        setCampaignInfo={setCampaignInfo}
+        setCampaignCount={setCampaignCount}
+        setTableInfo={setTableInfo}
+      />
+      {buttonLength !== 0 ? (
+        <CampaignWrap>
+          {campaignInfo.length !== 0 &&
+            campaignInfo.map(({ id, campaign_name }) => (
+              <Folder
+                key={id}
+                id={id}
+                campaign_name={campaign_name}
+                setCampaignInfo={setCampaignInfo}
+                setCampaignCount={setCampaignCount}
+                setTableInfo={setTableInfo}
+              />
+            ))}
+        </CampaignWrap>
+      ) : (
         <PhraseWrap>
           <PhraseHolder>캠페인을 생성해주세요</PhraseHolder>
         </PhraseWrap>
@@ -72,12 +94,18 @@ const MyPage = () => {
       <PaginationButtonWrap>
         {buttonLength !== 0 ? (
           buttonLengthArr.map(data => (
-            <PaginationButton key={data} onClick={() => updateOffset(data - 1)}>
+            <PaginationButton
+              key={data}
+              onClick={() => updateOffset(data - 1)}
+              color={data === buttonIndex ? '#E6A225' : 'black'}
+            >
               {data}
             </PaginationButton>
           ))
         ) : (
-          <PaginationButton onClick={() => updateOffset(0)}>1</PaginationButton>
+          <PaginationButton onClick={() => updateOffset(0)} color="#E6A225">
+            1
+          </PaginationButton>
         )}
       </PaginationButtonWrap>
     </MyPageWrap>
@@ -87,11 +115,15 @@ const MyPage = () => {
 export default MyPage;
 
 const MyPageWrap = styled.div`
-  margin: 10px;
+  background-color: ${({ theme }) => theme.lightGray};
+  padding: 30px;
 `;
 
 const TableWrap = styled.div`
   ${({ theme }) => theme.flex('center')};
+  padding-bottom: 30px;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.white};
 `;
 
 const ButtonWrap = styled.div`
@@ -99,22 +131,22 @@ const ButtonWrap = styled.div`
 `;
 const CreateCampaign = styled.button`
   margin: 30px 120px;
-  padding: 6px;
-  background-color: white;
-  border: 1px solid black;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.selectColor};
+  color: white;
   cursor: pointer;
-
-  &:hover {
-    background-color: #0074e9;
-    color: white;
-  }
 `;
 
 const CampaignWrap = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  margin: 0px auto;
+  margin-bottom: 30px;
+  padding: 30px 0px;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.white};
 `;
 
 const PaginationButtonWrap = styled.div`
@@ -123,18 +155,23 @@ const PaginationButtonWrap = styled.div`
 
 const PaginationButton = styled.button`
   ${({ theme }) => theme.flex('center', 'center')};
-  background-color: white;
+  background-color: ${({ theme }) => theme.lightGray};
   border: none;
   font-size: 17px;
+  color: ${props => props.color};
   cursor: pointer;
 
   &:hover {
-    color: #0074e9;
+    color: ${({ theme }) => theme.selectColor};
+    cursor: pointer;
   }
 `;
 
 const PhraseWrap = styled.div`
   ${({ theme }) => theme.flex('center', 'center')}
+  margin-bottom: 30px;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.white};
 `;
 
 const PhraseHolder = styled.div`

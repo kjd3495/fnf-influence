@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
-const CampaignTable = ({ id }) => {
-  const [info, setInfo] = useState({});
-
+const CampaignTable = ({ id, summaryInfo, setSummaryInfo }) => {
   useEffect(() => {
     fetch(`http://172.2.0.189:8000/count/campaign-influencer/${id}`, {
       method: 'GET',
@@ -14,9 +12,9 @@ const CampaignTable = ({ id }) => {
     })
       .then(res => res.json())
       .then(data => {
-        setInfo(data.result);
+        setSummaryInfo(data.result);
       });
-  }, [id]);
+  }, [id, setSummaryInfo]);
 
   return (
     <Table>
@@ -28,12 +26,12 @@ const CampaignTable = ({ id }) => {
         </tr>
       </thead>
       <tbody>
-        {info && (
+        {summaryInfo.length !== 0 && (
           <tr>
-            <Data>{info.totalCount}</Data>
-            <Data>{info.acceptCount}</Data>
-            <Data>{info.waitCount}</Data>
-            <Data>{info.rejectCount}</Data>
+            <Data>{summaryInfo.totalCount}</Data>
+            <Data>{summaryInfo.acceptCount}</Data>
+            <Data>{summaryInfo.waitCount}</Data>
+            <Data>{summaryInfo.rejectCount}</Data>
           </tr>
         )}
       </tbody>
@@ -61,6 +59,7 @@ const Header = styled.th`
   padding: 6px;
   border: 1px solid black;
   border-collapse: collapse;
+  background-color: #f0f5f7;
 `;
 
 const Data = styled.td`
