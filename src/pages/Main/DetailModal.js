@@ -192,7 +192,7 @@ const Content = styled.div`
 
 const HashTagsWrap = styled.div`
   width: 320px;
-  margin-top: 20px;
+  margin-top: 40px;
 `;
 
 const P = styled.p`

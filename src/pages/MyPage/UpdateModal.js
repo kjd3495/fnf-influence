@@ -36,6 +36,8 @@ const UpdateModal = ({ updateOpen, setUpdateOpen, id, setCampaignInfo }) => {
             .then(data => {
               setCampaignInfo(data.result);
             });
+        } else if (res.message === 'Already exist name') {
+          alert('이미 존재하는 캠페인입니다');
         }
       })
       .then(setUpdateOpen(false));
