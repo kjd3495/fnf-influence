@@ -61,6 +61,8 @@ const CreateCampaignModal = ({
                   setCampaignCount(data.result.campaignCount);
                 }
               });
+          } else if (res.message === 'Already exist name') {
+            alert('이미 존재하는 캠페인입니다');
           }
         })
         .then(() => {

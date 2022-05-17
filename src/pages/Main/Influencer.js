@@ -23,8 +23,13 @@ const Influencer = ({
   } = influencer;
 
   const goToDetail = () => {
-    setOpenModal({ ...openModal, detailModal: true });
-    setInfluencerInfo(influencer);
+    const token = localStorage.getItem('access_token');
+    if (token !== null) {
+      setOpenModal({ ...openModal, detailModal: true });
+      setInfluencerInfo(influencer);
+    } else {
+      alert('로그인 후 사용해주세요');
+    }
   };
 
   return (
@@ -95,7 +100,7 @@ const Tr = styled.tr`
   height: 180px;
   cursor: pointer;
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 `;
 const Td = styled.td`
