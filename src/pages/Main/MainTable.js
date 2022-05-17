@@ -8,6 +8,9 @@ const MainTable = ({
   influencerList,
   checkList,
   setCheckList,
+  openModal,
+  setOpenModal,
+  setInfluencerInfo,
 }) => {
   const handleSorting = name => {
     const token = localStorage.getItem('access_token');
@@ -84,6 +87,9 @@ const MainTable = ({
               influencer={influencer}
               checkList={checkList}
               handleCheck={handleCheck}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              setInfluencerInfo={setInfluencerInfo}
             />
           ))
         ) : (

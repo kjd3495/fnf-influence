@@ -38,23 +38,27 @@ const Register = () => {
     return passwordRegex.test(password);
   };
   const handleEmailCheck = () => {
-    fetch(`${API.checkemail}`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-      }),
-    }).then(res => {
-      if (res.status === 200) {
-        setEmailCheck(true);
-        alert('사용가능한 이메일입니다.');
-        return res.json();
-      } else {
-        alert('이미사용중인 이메일입니다.');
-      }
-    });
+    if (!isEmail(email)) {
+      alert('이메일 형식을 지켜주세요');
+    } else {
+      fetch(`${API.checkemail}`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      }).then(res => {
+        if (res.status === 200) {
+          setEmailCheck(true);
+          alert('사용가능한 이메일입니다.');
+          return res.json();
+        } else {
+          alert('이미사용중인 이메일입니다.');
+        }
+      });
+    }
   };
 
   const postCreate = () => {

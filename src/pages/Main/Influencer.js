@@ -1,9 +1,14 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Influencer = ({ influencer, checkList, handleCheck }) => {
-  const navigate = useNavigate();
+const Influencer = ({
+  influencer,
+  checkList,
+  handleCheck,
+  openModal,
+  setOpenModal,
+  setInfluencerInfo,
+}) => {
   const {
     id,
     influencer_instagram_id,
@@ -18,7 +23,8 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
   } = influencer;
 
   const goToDetail = () => {
-    navigate(`/detail/${id}`);
+    setOpenModal({ ...openModal, detailModal: true });
+    setInfluencerInfo(influencer);
   };
 
   return (

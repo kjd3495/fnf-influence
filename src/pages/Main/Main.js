@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import MainTable from './MainTable';
 import MessageModal from './MessageModal';
+import DetailModal from './DetailModal';
 import { API } from '../../config';
 
 const Main = () => {
@@ -21,8 +22,12 @@ const Main = () => {
   });
   const [pageList, setPageList] = useState([]);
   const [keyword, setKeyword] = useState('');
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState({
+    messageModal: false,
+    detailModal: false,
+  });
   const [campaignList, setCampaignList] = useState([]);
+  const [influencerInfo, setInfluencerInfo] = useState({});
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,19 +77,19 @@ const Main = () => {
         });
         if (ListRes.status === 200) {
           const List = await ListRes.json();
-          const length = Math.ceil(List.influencerList[1] / 5);
+          const length = Math.ceil(List.count / 5);
           const newPageList = [];
           for (let i = 0; i < length; i++) {
             newPageList.push(i + 1);
           }
-          setInfluencerList(List.influencerList);
+          setInfluencerList(List.result);
           setPageList(newPageList);
         }
       } else if (!location.search) {
         const ListRes = await fetch(`${API.main}`);
         if (ListRes.status === 200) {
           const List = await ListRes.json();
-          const length = Math.ceil(List.result[1] / 5);
+          const length = Math.ceil(List.count / 5);
           const newPageList = [];
           for (let i = 0; i < length; i++) {
             newPageList.push(i + 1);
@@ -107,7 +112,7 @@ const Main = () => {
         });
         if (ListRes.status === 200) {
           const List = await ListRes.json();
-          const length = Math.ceil(List.result[1] / 5);
+          const length = Math.ceil(List.count / 5);
           const newPageList = [];
           for (let i = 0; i < length; i++) {
             newPageList.push(i + 1);
@@ -173,7 +178,7 @@ const Main = () => {
     } else if (checkList.length === 0) {
       alert('인플루언서를 선택해주세요');
     } else {
-      setOpenModal(true);
+      setOpenModal({ ...openModal, messageModal: true });
     }
   };
 
@@ -237,6 +242,14 @@ const Main = () => {
           influencerList={influencerList}
           checkList={checkList}
           setCheckList={setCheckList}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          setInfluencerInfo={setInfluencerInfo}
+        />
+        <DetailModal
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          influencerId={influencerInfo.id}
         />
         <Pagenation>
           {pageList.length !== 0 &&
