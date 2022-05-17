@@ -22,7 +22,7 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
   };
 
   return (
-    <Tr onClick={goToDetail}>
+    <Tr>
       <Td>
         <CheckBox
           type="checkbox"
@@ -30,11 +30,11 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
           onChange={e => handleCheck(e, id)}
         />
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         <Img image={influencer_img} />
       </Td>
-      <Td>{influencer_instagram_id}</Td>
-      <Td>
+      <Td onClick={goToDetail}>{influencer_instagram_id}</Td>
+      <Td onClick={goToDetail}>
         <Div>
           {influencer_categories.length !== 0 &&
             influencer_categories.map(category => (
@@ -44,7 +44,7 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
             ))}
         </Div>
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         <Div>
           {influencer_hashtags.length !== 0 &&
             influencer_hashtags.map(tag => (
@@ -52,29 +52,29 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
             ))}
         </Div>
       </Td>
-      <Td>{influencer_gender}</Td>
-      <Td>
+      <Td onClick={goToDetail}>{influencer_gender}</Td>
+      <Td onClick={goToDetail}>
         {influencer_follower >= 10000
           ? parseInt(influencer_follower / 10000) + '만'
           : Math.floor(influencer_follower)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_posting >= 10000
           ? parseInt(influencer_posting / 10000) + '만'
           : Math.floor(influencer_posting)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_average_like >= 10000
           ? parseInt(influencer_average_like / 10000) + '만'
           : Math.floor(influencer_average_like)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
       </Td>
-      <Td>
+      <Td onClick={goToDetail}>
         {influencer_average_comment >= 10000
           ? parseInt(influencer_average_comment / 10000) + '만'
           : Math.floor(influencer_average_comment)

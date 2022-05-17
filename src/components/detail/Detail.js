@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { API } from '../../config';
 const Detail = () => {
   const [influencerInfo, setInfluencerInfo] = useState({});
   const [imgList, setImgList] = useState([]);
@@ -18,12 +19,9 @@ const Detail = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const infoRes = await fetch(
-        `http://172.2.0.189:8000/filter/influencer-image/${params.id}`,
-        {
-          headers: { Authorization: localStorage.getItem('access_token') },
-        }
-      );
+      const infoRes = await fetch(`${API.detail}/${params.id}`, {
+        headers: { Authorization: localStorage.getItem('access_token') },
+      });
       if (infoRes.status === 200) {
         const info = await infoRes.json();
         setInfluencerInfo(info.result);
