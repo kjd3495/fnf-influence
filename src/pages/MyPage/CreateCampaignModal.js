@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Modal from 'react-modal';
 import { useLocation } from 'react-router-dom';
+import { API } from '../../config';
 
 const CreateCampaignModal = ({
   modalOpen,
@@ -14,7 +15,7 @@ const CreateCampaignModal = ({
   const [nameValue, setNameValue] = useState('');
 
   const postCampaignName = () => {
-    fetch('http://172.2.0.189:8000/campaign/create-campaign', {
+    fetch(`${API.createCampaign}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -28,9 +29,7 @@ const CreateCampaignModal = ({
       .then(res => {
         if (res.message === 'Success') {
           fetch(
-            `http://172.2.0.189:8000/filter/user-campaign-list${
-              location.search || `?limit=6&offset=0`
-            }`,
+            `${API.userCampaignList}${location.search || `?limit=6&offset=0`}`,
             {
               method: 'GET',
               headers: {
@@ -43,7 +42,7 @@ const CreateCampaignModal = ({
             .then(data => {
               setCampaignInfo(data.result);
             });
-          fetch('http://172.2.0.189:8000/count/total-influencer', {
+          fetch(`${API.totalInfluencer}`, {
             method: 'GET',
             headers: {
               'Content-type': 'application/json',

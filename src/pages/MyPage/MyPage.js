@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import SummaryTable from './SummaryTable';
 import Folder from './Folder';
 import CreateCampaignModal from './CreateCampaignModal';
+import { API } from '../../config';
 
 const MyPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -16,18 +17,13 @@ const MyPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    fetch(
-      `http://172.2.0.189:8000/filter/user-campaign-list${
-        location.search || `?limit=6&offset=0`
-      }`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: localStorage.getItem('access_token'),
-        },
-      }
-    )
+    fetch(`${API.userCampaignList}${location.search || `?limit=6&offset=0`}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: localStorage.getItem('access_token'),
+      },
+    })
       .then(res => res.json())
       .then(data => setCampaignInfo(data.result));
   }, [location.search]);

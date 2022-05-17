@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { API } from '../../config';
 
 const SummaryTable = ({ tableInfo, setTableInfo, setCampaignCount }) => {
   useEffect(() => {
-    fetch('http://172.2.0.189:8000/count/total-influencer', {
+    fetch(`${API.totalInfluencer}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json',

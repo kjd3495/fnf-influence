@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
+import { API } from '../../config';
 
 const MessageModal = ({
   openModal,
@@ -17,7 +18,7 @@ const MessageModal = ({
   useEffect(() => {
     async function fetchData() {
       const campaignListRes = await fetch(
-        'http://172.2.0.189:8000/filter/user-campaign-list?offset=0&limit=0',
+        `${API.userCampaignList}?offset=0&limit=0`,
         {
           headers: {
             Authorization: localStorage.getItem('access_token'),
@@ -49,7 +50,7 @@ const MessageModal = ({
     if (!inputValues.content) {
       alert('메세지 내용을 입력해주세요.');
     } else {
-      fetch('http://172.2.0.189:8000/message/send', {
+      fetch(`${API.sendMessage}`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',

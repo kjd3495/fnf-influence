@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'react-modal';
+import { API } from '../../config';
 
 const DeleteModal = ({
   deleteOpen,
@@ -13,7 +14,7 @@ const DeleteModal = ({
 }) => {
   const location = useLocation();
   const deleteCampaign = () => {
-    fetch(`http://172.2.0.189:8000/campaign/delete-campaign/${id}`, {
+    fetch(`${API.deleteCampaign}/${id}`, {
       method: 'Delete',
       headers: {
         Authorization: localStorage.getItem('access_token'),
@@ -23,9 +24,7 @@ const DeleteModal = ({
       .then(res => {
         if (res.message === 'Success') {
           fetch(
-            `http://172.2.0.189:8000/filter/user-campaign-list${
-              location.search || `?limit=6&offset=0`
-            }`,
+            `${API.userCampaignList}${location.search || `?limit=6&offset=0`}`,
             {
               method: 'GET',
               headers: {
@@ -38,7 +37,7 @@ const DeleteModal = ({
             .then(data => {
               setCampaignInfo(data.result);
             });
-          fetch('http://172.2.0.189:8000/count/total-influencer', {
+          fetch(`${API.totalInfluencer}`, {
             method: 'GET',
             headers: {
               'Content-type': 'application/json',

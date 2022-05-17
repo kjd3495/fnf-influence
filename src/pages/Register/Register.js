@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { API } from '../../config';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Register = () => {
     return passwordRegex.test(password);
   };
   const handleEmailCheck = () => {
-    fetch('http://172.2.0.189:8000/user/check-email', {
+    fetch(`${API.checkemail}`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ const Register = () => {
     } else if (brand_name.length > 20) {
       alert('회사명은 20자 이하로 입력해주세요');
     } else {
-      fetch('http://172.2.0.189:8000/user/signup', {
+      fetch(`${API.signup}`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',

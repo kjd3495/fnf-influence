@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import MainTable from './MainTable';
 import MessageModal from './MessageModal';
+import { API } from '../../config';
 
 const Main = () => {
   const [categories, setCategories] = useState([]);
@@ -28,14 +29,11 @@ const Main = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const categoryRes = await fetch(
-        'http://172.2.0.189:8000/filter/category-list',
-        {
-          headers: {
-            Authorization: localStorage.getItem('access_token'),
-          },
-        }
-      );
+      const categoryRes = await fetch(`${API.category}`, {
+        headers: {
+          Authorization: localStorage.getItem('access_token'),
+        },
+      });
       const categoriesData = await categoryRes.json();
       setCategories(categoriesData.result);
     }
@@ -67,14 +65,11 @@ const Main = () => {
   useEffect(() => {
     async function fetchData() {
       if (location.search.includes('key')) {
-        const ListRes = await fetch(
-          `http://172.2.0.189:8000/search${location.search}`,
-          {
-            headers: {
-              Authorization: localStorage.getItem('access_token'),
-            },
-          }
-        );
+        const ListRes = await fetch(`${API.search}${location.search}`, {
+          headers: {
+            Authorization: localStorage.getItem('access_token'),
+          },
+        });
         if (ListRes.status === 200) {
           const List = await ListRes.json();
           const length = Math.ceil(List.influencerList[1] / 5);
@@ -86,7 +81,7 @@ const Main = () => {
           setPageList(newPageList);
         }
       } else if (!location.search) {
-        const ListRes = await fetch(`http://172.2.0.189:8000/filter/main`);
+        const ListRes = await fetch(`${API.main}`);
         if (ListRes.status === 200) {
           const List = await ListRes.json();
           const length = Math.ceil(List.result[1] / 5);
@@ -105,14 +100,11 @@ const Main = () => {
           setCheckList([]);
         }
       } else {
-        const ListRes = await fetch(
-          `http://172.2.0.189:8000/filter/category-influencer-list${location.search}`,
-          {
-            headers: {
-              Authorization: localStorage.getItem('access_token'),
-            },
-          }
-        );
+        const ListRes = await fetch(`${API.influencerList}${location.search}`, {
+          headers: {
+            Authorization: localStorage.getItem('access_token'),
+          },
+        });
         if (ListRes.status === 200) {
           const List = await ListRes.json();
           const length = Math.ceil(List.result[1] / 5);
