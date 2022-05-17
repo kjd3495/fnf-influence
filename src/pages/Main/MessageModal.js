@@ -96,7 +96,13 @@ const MessageModal = ({
           </li>
           <li>
             <P>메시지 내용</P>
-            <TextArea value={inputValues.content} onChange={handleContent} />
+            <TextArea
+              value={inputValues.content}
+              onChange={handleContent}
+              placeholder="  안녕하세요 OOO(인플루언서)님, OOO(회사)입니다.&#13;&#10;
+              ***고객님께서 입력하신 내용***&#13;&#10;
+              형식으로 인플루언서에게 전송됩니다."
+            />
           </li>
           <li>
             <ButtonWrap>
@@ -118,7 +124,7 @@ const SelectWrap = styled.div`
   margin-bottom: 20px;
 `;
 const Select = styled.select`
-  width: 80px;
+  width: 120px;
   margin-left: 20px;
 `;
 const TextArea = styled.textarea`

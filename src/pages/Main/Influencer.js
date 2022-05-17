@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Influencer = ({ influencer, checkList, handleCheck }) => {
+  const navigate = useNavigate();
   const {
     id,
     influencer_instagram_id,
@@ -15,8 +17,12 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
     influencer_hashtags,
   } = influencer;
 
+  const goToDetail = () => {
+    navigate(`/detail/${id}`);
+  };
+
   return (
-    <Tr>
+    <Tr onClick={goToDetail}>
       <Td>
         <CheckBox
           type="checkbox"
@@ -81,6 +87,10 @@ const Influencer = ({ influencer, checkList, handleCheck }) => {
 
 const Tr = styled.tr`
   height: 180px;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 const Td = styled.td`
   text-align: center;

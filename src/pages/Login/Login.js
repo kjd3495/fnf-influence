@@ -56,6 +56,12 @@ const Login = () => {
     return emailRegex.test(email);
   };
 
+  const enterEvent = e => {
+    if (e.key === 'Enter') {
+      loginHandler();
+    }
+  };
+
   return (
     <RegisterFormWrap>
       <Logo onClick={goToMain}>Influence</Logo>
@@ -67,6 +73,7 @@ const Login = () => {
             name="email"
             value={inputValues.email}
             onChange={changeValue}
+            onKeyUp={enterEvent}
           />
         </InputWrap>
         {!inputValues.email ? (
@@ -83,6 +90,7 @@ const Login = () => {
             name="password"
             value={inputValues.password}
             onChange={changeValue}
+            onKeyUp={enterEvent}
           />
         </InputWrap>
         <InputWrap>
