@@ -83,7 +83,7 @@ const Tr = styled.tr`
   height: 180px;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     cursor: pointer;
   }
 `;

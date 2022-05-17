@@ -43,9 +43,11 @@ const MessageModal = ({
   const handleContent = e => {
     setInputValues({ ...inputValues, content: e.target.value });
   };
+
   const handleCampaign = e => {
     setInputValues({ ...inputValues, campaign: e.target.value });
   };
+
   const sendMessage = () => {
     if (!inputValues.content) {
       alert('메세지 내용을 입력해주세요.');
@@ -64,7 +66,7 @@ const MessageModal = ({
       }).then(res => {
         if (res.status === 200) {
           alert('전송이 완료되었습니다.');
-          setOpenModal(false);
+          setOpenModal({ ...openModal, messageModal: false });
           setCheckList([]);
           setInputValues({ ...inputValues, content: '' });
         } else if (res.status === 406) {
@@ -75,7 +77,7 @@ const MessageModal = ({
   };
   return (
     <Modal
-      isOpen={openModal}
+      isOpen={openModal.messageModal}
       style={customStyles}
       ariaHideApp={false}
       contentLabel="Example Modal"
@@ -110,7 +112,12 @@ const MessageModal = ({
               <Button type="button" onClick={sendMessage}>
                 보내기
               </Button>
-              <Button type="button" onClick={() => setOpenModal(false)}>
+              <Button
+                type="button"
+                onClick={() =>
+                  setOpenModal({ ...openModal, messageModal: false })
+                }
+              >
                 닫기
               </Button>
             </ButtonWrap>
