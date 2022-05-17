@@ -30,7 +30,7 @@ const Detail = () => {
       }
     }
     fetchData();
-  }, []);
+  }, [params]);
 
   return (
     <DetailWrap>

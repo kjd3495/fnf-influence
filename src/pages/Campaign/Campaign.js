@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import InfluencerTable from './InfluencerTable';
 import CampaignTable from './CampaignTable';
 import DropDown from './DropDown';
+import { API } from '../../config';
 
 const Campaign = () => {
   const navigate = useNavigate();
@@ -35,16 +36,13 @@ const Campaign = () => {
     }`;
     navigate(queryUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
 
-    fetch(
-      `http://172.2.0.189:8000/filter/campaign-status-influencer-list${queryUrl}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: localStorage.getItem('access_token'),
-        },
-      }
-    )
+    fetch(`${API.campaignInfluencerList}${queryUrl}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: localStorage.getItem('access_token'),
+      },
+    })
       .then(res => res.json())
       .then(data => setTableInfo(data.result));
   }, [filterValues, pagenation, navigate, params.id]);
@@ -59,16 +57,13 @@ const Campaign = () => {
     }`;
     navigate(queryUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
 
-    fetch(
-      `http://172.2.0.189:8000/filter/campaign-total-status-influencer-list${queryUrl}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: localStorage.getItem('access_token'),
-        },
-      }
-    )
+    fetch(`${API.campaignTotalInfluencerList}${queryUrl}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: localStorage.getItem('access_token'),
+      },
+    })
       .then(res => res.json())
       .then(data => setTotalInfo(data.result));
   }, [filterValues, pagenation, navigate, params.id]);
