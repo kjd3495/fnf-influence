@@ -154,14 +154,3 @@ const Button = styled.button`
   font-weight: bold;
   cursor: pointer;
 `;
-
-const influencerList1 = [
-  { id: 1, content: 'hello' },
-  { id: 2, content: 'helloasd' },
-  { id: 3, content: 'helloooo' },
-];
-const influencerList2 = [
-  { id: 3, content: 'erw' },
-  { id: 4, content: 'qwe' },
-  { id: 5, content: 'qweff' },
-];
