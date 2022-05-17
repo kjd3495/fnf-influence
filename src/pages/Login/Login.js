@@ -49,6 +49,13 @@ const Login = () => {
     navigate('/register');
   };
 
+  const isEmail = email => {
+    const emailRegex =
+      /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+    return emailRegex.test(email);
+  };
+
   return (
     <RegisterFormWrap>
       <Logo onClick={goToMain}>Influence</Logo>
@@ -62,6 +69,13 @@ const Login = () => {
             onChange={changeValue}
           />
         </InputWrap>
+        {!inputValues.email ? (
+          ''
+        ) : isEmail(inputValues.email) && inputValues.email.length < 41 ? (
+          ''
+        ) : (
+          <False>이메일형식을 지켜주세요.</False>
+        )}
         <InputWrap>
           <P>비밀번호</P>
           <Input
@@ -124,6 +138,10 @@ const Input = styled.input`
   font-size: 20px;
 `;
 
+const False = styled.span`
+  color: red;
+`;
+
 const Button = styled.button`
   width: 170px;
   height: 40px;
@@ -136,3 +154,14 @@ const Button = styled.button`
   font-weight: bold;
   cursor: pointer;
 `;
+
+const influencerList1 = [
+  { id: 1, content: 'hello' },
+  { id: 2, content: 'helloasd' },
+  { id: 3, content: 'helloooo' },
+];
+const influencerList2 = [
+  { id: 3, content: 'erw' },
+  { id: 4, content: 'qwe' },
+  { id: 5, content: 'qweff' },
+];

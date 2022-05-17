@@ -43,13 +43,15 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
-    const queryUrl = `${
-      filterValues.categoryId ? `?categoryId=${filterValues.categoryId}` : ``
-    }${
-      filterValues.keyword
-        ? `?key=${filterValues.keyword.replace(/ /g, '').replace(/#/g, '')}`
-        : ``
-    }
+    const token = localStorage.getItem('access_token');
+    if (token !== null) {
+      const queryUrl = `${
+        filterValues.categoryId ? `?categoryId=${filterValues.categoryId}` : ``
+      }${
+        filterValues.keyword
+          ? `?key=${filterValues.keyword.replace(/ /g, '').replace(/#/g, '')}`
+          : ``
+      }
     ${
       (filterValues.categoryId && filterValues.sort_by) ||
       (filterValues.keyword && filterValues.sort_by)
@@ -57,8 +59,9 @@ const Main = () => {
         : ``
     }${`&limit=${pagenation.limit}&offset=${pagenation.offset}`}`;
 
-    const decodeUrl = decodeURIComponent(queryUrl);
-    navigate(decodeUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
+      const decodeUrl = decodeURIComponent(queryUrl);
+      navigate(decodeUrl.replace(/ /g, '').replace(/(\r\n|\n|\r)/g, ''));
+    }
   }, [filterValues, pagenation, navigate]);
 
   useEffect(() => {
@@ -81,6 +84,25 @@ const Main = () => {
           }
           setInfluencerList(List.influencerList[0]);
           setPageList(newPageList);
+        }
+      } else if (!location.search) {
+        const ListRes = await fetch(`http://172.2.0.189:8000/filter/main`);
+        if (ListRes.status === 200) {
+          const List = await ListRes.json();
+          const length = Math.ceil(List.result[1] / 5);
+          const newPageList = [];
+          for (let i = 0; i < length; i++) {
+            newPageList.push(i + 1);
+          }
+          setInfluencerList(List.result[0]);
+          setPageList(newPageList);
+          setFilterValues({
+            categoryId: 1,
+            keyword: '',
+            sort_by: 'influencer_follower',
+            sort_option: 'down',
+          });
+          setCheckList([]);
         }
       } else {
         const ListRes = await fetch(
@@ -105,7 +127,7 @@ const Main = () => {
         }
       }
     }
-    if (location.search) fetchData();
+    fetchData();
   }, [location.search]);
 
   const filteringCategory = id => {
