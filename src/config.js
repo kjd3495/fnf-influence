@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://172.2.0.189:8000';
+export const BASE_URL = 'http://172.2.0.217:8000';
 
 export const API = {
   signin: `${BASE_URL}/user/signin`, // 로그인
@@ -14,4 +14,5 @@ export const API = {
   search: `${BASE_URL}/search`, // 검색
   main: `${BASE_URL}/filter/main`, // 메인페이지 비로그인 리스트
   influencerList: `${BASE_URL}/filter/category-influencer-list`, // 메인페이지 인플루언서 리스트
+  detail: `${BASE_URL}/filter/influencer-image`, // 인플루언서 상세페이지
 };
