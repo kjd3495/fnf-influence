@@ -9,38 +9,48 @@ const UpdateModal = ({ updateOpen, setUpdateOpen, id, setCampaignInfo }) => {
   const [nameValue, setNameValue] = useState('');
 
   const updateCampaignName = () => {
-    fetch(`${API.updateCampaign}/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: localStorage.getItem('access_token'),
-      },
-      body: JSON.stringify({
-        campaignName: nameValue,
-      }),
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (res.message === 'Success') {
-          fetch(
-            `${API.userCampaignList}${location.search || `?limit=6&offset=0`}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-type': 'application/json',
-                Authorization: localStorage.getItem('access_token'),
-              },
-            }
-          )
-            .then(res => res.json())
-            .then(data => {
-              setCampaignInfo(data.result);
-            });
-        } else if (res.message === 'Already exist name') {
-          alert('이미 존재하는 캠페인입니다');
-        }
+    if (!nameValue) {
+      alert('캠페인명을 입력해주세요');
+    } else if (nameValue.length > 20) {
+      alert('캠페인명은 20자를 넘을 수 없습니다');
+    } else {
+      fetch(`${API.updateCampaign}/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: localStorage.getItem('access_token'),
+        },
+        body: JSON.stringify({
+          campaignName: nameValue,
+        }),
       })
-      .then(setUpdateOpen(false));
+        .then(res => res.json())
+        .then(res => {
+          if (res.message === 'Success') {
+            fetch(
+              `${API.userCampaignList}${
+                location.search || `?limit=6&offset=0`
+              }`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-type': 'application/json',
+                  Authorization: localStorage.getItem('access_token'),
+                },
+              }
+            )
+              .then(res => res.json())
+              .then(data => {
+                setCampaignInfo(data.result);
+                setNameValue('');
+              });
+          } else if (res.message === 'Already exist name') {
+            alert('이미 존재하는 캠페인입니다');
+            setNameValue('');
+          }
+        })
+        .then(setUpdateOpen(false));
+    }
   };
 
   const nameHandler = e => {
