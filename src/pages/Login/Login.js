@@ -12,27 +12,31 @@ const Login = () => {
   });
 
   const loginHandler = () => {
-    fetch(`${API.signin}`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: inputValues.email,
-        password: inputValues.password,
-      }),
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (res.message === 'Invalid email') {
-          alert('존재하지 않는 이메일 입니다.');
-        } else if (res.message === 'Invalid password') {
-          alert('비밀번호가 일치하지 않습니다.');
-        } else if (res.message === 'Login success') {
-          localStorage.setItem('access_token', res.token);
-          navigate('/');
-        }
-      });
+    if (!isEmail(inputValues.email)) {
+      alert('이메일 형식을 지켜주세요');
+    } else {
+      fetch(`${API.signin}`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: inputValues.email,
+          password: inputValues.password,
+        }),
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.message === 'Invalid email') {
+            alert('존재하지 않는 이메일 입니다.');
+          } else if (res.message === 'Invalid password') {
+            alert('비밀번호가 일치하지 않습니다.');
+          } else if (res.message === 'Login success') {
+            localStorage.setItem('access_token', res.token);
+            navigate('/');
+          }
+        });
+    }
   };
 
   const changeValue = e => {
