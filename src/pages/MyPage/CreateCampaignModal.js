@@ -17,6 +17,8 @@ const CreateCampaignModal = ({
   const postCampaignName = () => {
     if (nameValue.length === 0) {
       alert('캠페인명을 입력해주세요');
+    } else if (nameValue.length > 20) {
+      alert('캠페인명은 20자를 넘을 수 없습니다');
     } else {
       fetch(`${API.createCampaign}`, {
         method: 'POST',
