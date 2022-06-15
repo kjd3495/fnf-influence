@@ -63,7 +63,7 @@ Influence는 신생 및 중소 기업을 타겟으로 한 인플루언서 탐색
     <td align="center">
       <a href="https://github.com/chkevi"
         ><img
-          src="https://github.com/chkevi"
+          src="https://avatars.githubusercontent.com/u/18214674?v=4"
           width="100px;"
           alt=""
         /><br /><sub><b>최희동</b></sub></a
